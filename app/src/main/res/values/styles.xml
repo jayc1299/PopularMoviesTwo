@@ -1,0 +1,29 @@
+<resources>
+
+	<!-- Base application theme. -->
+	<style name="BaseTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+		<item name="colorPrimary">@color/colorPrimary</item>
+		<item name="colorPrimaryDark">@color/colorDark</item>
+		<item name="colorAccent">@color/colorAccent</item>
+		<item name="android:textColor">@color/colorPrimaryText</item>
+		<item name="android:textColorSecondary">@color/colorSecondText</item>
+	</style>
+
+	<style name="ToolbarColoredBackArrow" parent="BaseTheme">
+		<item name="android:textColorSecondary">@color/colorWhite</item>
+	</style>
+
+	<style name="defaultText">
+		<item name="android:textColor">@color/colorPrimaryText</item>
+	</style>
+
+	<style name="movieDetailSubHeader" parent="defaultText">
+		<item name="android:textStyle">bold</item>
+		<item name="android:textSize">14sp</item>
+	</style>
+
+	<style name="movieDetailInfo" parent="defaultText">
+		<item name="android:textSize">18sp</item>
+	</style>
+
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent">
+
+	<GridView
+		android:id="@+id/fragment_main_gridview"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:numColumns="2"
+		android:verticalSpacing="8dp"
+		android:padding="8dp"
+		android:background="@color/colorLight"
+		android:stretchMode="columnWidth"/>
+
+	<TextView
+		android:id="@+id/fragment_main_no_results"
+		style="@style/defaultText"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:gravity="center"
+		android:layout_margin="10dp"
+		android:visibility="gone"
+		android:text="@string/no_movies_found" />
+</RelativeLayout>
