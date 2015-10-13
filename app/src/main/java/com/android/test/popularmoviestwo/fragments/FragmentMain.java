@@ -1,7 +1,6 @@
 package com.android.test.popularmoviestwo.fragments;
 
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -36,6 +35,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 
 	GridView mGridview;
 	AdapterMovies mAdapter;
+	SharedPreferences mPrefs;
 
 	private static final int FAVOURITES = 1;
 
@@ -50,6 +50,8 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	@Override
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 		//Set empty adapter, items added later
 		mAdapter = new AdapterMovies(getActivity(), R.layout.item_movie, new ArrayList<Result>());
@@ -80,8 +82,11 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		});
 	}
 
+	/**
+	 * Called sometimes from Activity when settings exits. Check do we require favourites only? If not show movies.
+	 */
 	public void showTiles(){
-		if(showFavourites(getActivity())){
+		if(showFavourites()){
 			getFavourites();
 		}else{
 			getMovies();
@@ -96,8 +101,10 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		async.execute(getActivity());
 	}
 
+	/**
+	 * Get favourites from local db
+	 */
 	private void getFavourites(){
-		Log.d(FragmentMain.class.getSimpleName(), "getting favourites");
 		getLoaderManager().restartLoader(FAVOURITES, null, this);
 	}
 
@@ -109,9 +116,8 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		}
 	}
 
-	private boolean showFavourites(Context context){
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		return prefs.getBoolean(context.getString(R.string.pref_favs_key), false);
+	private boolean showFavourites(){
+		return mPrefs.getBoolean(getActivity().getString(R.string.pref_favs_key), false);
 	}
 
 	@Override
@@ -132,11 +138,10 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		List<Result> items = new ArrayList<>();
 		Result fav;
-		if (getView() != null) {
+		if (getView() != null && showFavourites()) {
 			int id = loader.getId();
 			switch (id) {
 				case FAVOURITES: {
-					Log.d(FragmentMain.class.getSimpleName(), "onLoadFinished:" + data.getCount());
 					if(data != null && data.moveToFirst()) {
 						while (!data.isAfterLast()) {
 							fav = new Result(
@@ -149,13 +154,12 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 							items.add(fav);
 							data.moveToNext();
 						}
+						Log.d(FragmentMain.class.getSimpleName(), "items size:" + items.size());
+						mAdapter.updateItems(items);
 					}
 				}
 			}
 		}
-
-		Log.d(FragmentMain.class.getSimpleName(), "items size:" + items.size());
-		mAdapter.updateItems(items);
 	}
 
 	@Override
