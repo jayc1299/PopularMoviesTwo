@@ -51,6 +51,10 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
+		//Set empty adapter, items added later
+		mAdapter = new AdapterMovies(getActivity(), R.layout.item_movie, new ArrayList<Result>());
+		mGridview.setAdapter(mAdapter);
+
 		showTiles();
 
 		mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -94,16 +98,15 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 
 	private void getFavourites(){
 		Log.d(FragmentMain.class.getSimpleName(), "getting favourites");
-		getLoaderManager().initLoader(FAVOURITES, null, this);
+		getLoaderManager().restartLoader(FAVOURITES, null, this);
 	}
 
 	@Override
 	public void onMoviesReceived(PojoMovies movies) {
 		if(movies != null) {
-			mAdapter = new AdapterMovies(getActivity(), R.layout.item_movie, movies.results);
+			Log.d(FragmentMain.class.getSimpleName(), "movies:" + movies.results.size());
+			mAdapter.updateItems(movies.results);
 		}
-		mGridview.setEmptyView(getView().findViewById(R.id.fragment_main_no_results));
-		mGridview.setAdapter(mAdapter);
 	}
 
 	private boolean showFavourites(Context context){
@@ -152,9 +155,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		}
 
 		Log.d(FragmentMain.class.getSimpleName(), "items size:" + items.size());
-		mAdapter = new AdapterMovies(getActivity(), R.layout.item_movie, items);
-		mGridview.setEmptyView(getView().findViewById(R.id.fragment_main_no_results));
-		mGridview.setAdapter(mAdapter);
+		mAdapter.updateItems(items);
 	}
 
 	@Override

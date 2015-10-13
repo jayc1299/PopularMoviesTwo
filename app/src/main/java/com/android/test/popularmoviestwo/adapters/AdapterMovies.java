@@ -42,7 +42,7 @@ public class AdapterMovies extends ArrayAdapter<Result>{
 		}
 
 		//Get image path and use picasso to load it.
-		String path = mApi.getImgUrl(mMovies.get(position).posterPath, false);
+		String path = mApi.getImgUrl(getItem(position).posterPath, false);
 		Picasso.with(mContext).load(path).into(viewHolder.thumbImage);
 
 		convertView.setTag(viewHolder);
@@ -50,8 +50,8 @@ public class AdapterMovies extends ArrayAdapter<Result>{
 	}
 
 	public void updateItems(List<Result> movies){
-		mMovies = movies;
-		this.notifyDataSetChanged();
+		clear();
+		addAll(movies);
 	}
 
 	public class ViewHolder {
