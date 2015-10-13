@@ -11,6 +11,9 @@
 	<string name="pref_sort_key">sort_order</string>
 	<string name="pref_sort_label">Sort Order</string>
 	<string name="pref_sort_default">popularity.desc</string>
+	<string name="pref_favs_key">show_favourites</string>
+	<string name="pref_favs_title">Show Favourites</string>
+	<string name="pref_favs_label">Show only a list of your favourite movies</string>
 
 	<string name="fragment_detail_title">Title</string>
 	<string name="fragment_detail_release_date">Release Date</string>

@@ -32,8 +32,6 @@ import com.android.test.popularmoviestwo.R;
 
 public class ActivitySettings extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
 
-	public static final String TAG_BROADCAST_SETTING_CHANGED = "tag_broadcast_setting_changed";
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -39,9 +39,6 @@ public class ActivityMain extends AppCompatActivity{
 			case R.id.action_settings:
 				startActivityForResult(new Intent(ActivityMain.this, ActivitySettings.class), REQUEST_CODE_SETTINGS);
 				return true;
-			case R.id.action_favourites:
-				startActivity(new Intent(ActivityMain.this, ActivityFavourites.class));
-				return true;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -53,7 +50,7 @@ public class ActivityMain extends AppCompatActivity{
 		if(!isFinishing() && requestCode == REQUEST_CODE_SETTINGS){
 			FragmentMain fm = (FragmentMain) getSupportFragmentManager().findFragmentByTag(FragmentMain.class.getSimpleName());
 			if(fm != null){
-				fm.getMovies();
+				fm.showTiles();
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package com.android.test.popularmoviestwo.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,11 @@ public class AdapterMovies extends ArrayAdapter<Result>{
 
 		convertView.setTag(viewHolder);
 		return convertView;
+	}
+
+	public void updateItems(List<Result> movies){
+		mMovies = movies;
+		this.notifyDataSetChanged();
 	}
 
 	public class ViewHolder {

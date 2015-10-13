@@ -29,14 +29,11 @@ public class FavouritesProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		Cursor retCursor;
-		SQLiteQueryBuilder sqlLiteBuilder = new SQLiteQueryBuilder();
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-		sqlLiteBuilder.setTables(TableHelperFavourites.TABLE_NAME);
 
 		switch (sUriMatcher.match(uri)) {
 			case GET_FAVOURITES:{
-				retCursor = sqlLiteBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+				retCursor = db.query(TableHelperFavourites.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
 				break;
 			}
 			default: {
@@ -78,8 +75,21 @@ public class FavouritesProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		Log.w(FavouritesProvider.class.getSimpleName(), "No code for delete");
-		return 0;
+		int rowsDeleted = 0;
+		SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+		switch (sUriMatcher.match(uri)) {
+			case INSERT_FAVOURITE: {
+				rowsDeleted = db.delete(TableHelperFavourites.TABLE_NAME, selection, selectionArgs);
+				break;
+			}
+			default: {
+				throw new UnsupportedOperationException("Unknown uri: " + uri);
+			}
+		}
+
+		getContext().getContentResolver().notifyChange(uri, null);
+		return rowsDeleted;
 	}
 
 	@Override

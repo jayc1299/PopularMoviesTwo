@@ -14,4 +14,5 @@ public class MoviesContract {
 
 	public static Uri URI_FAVOURITES_GET_ALL = MoviesContract.BASE_CONTENT_URI.buildUpon().appendPath(MoviesContract.PATH_FAVOUTIRES).build();
 	public static Uri URI_FAVOURITES_INSERT = MoviesContract.BASE_CONTENT_URI.buildUpon().appendPath(MoviesContract.PATH_FAVOUTIRES).appendPath("insert").build();
+	public static Uri URI_FAVOURITES_DELETE = MoviesContract.BASE_CONTENT_URI.buildUpon().appendPath(MoviesContract.PATH_FAVOUTIRES).appendPath("delete").build();
 }

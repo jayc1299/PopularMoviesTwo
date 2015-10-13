@@ -54,6 +54,17 @@ public class Result implements Parcelable {
 	@Expose
 	public int voteCount;
 
+	public Result(){}
+
+	public Result(int id, String title, String releaseDate, float voteAverage, String overview, String posterPath){
+		this.id = id;
+		this.title = title;
+		this.releaseDate = releaseDate;
+		this.voteAverage = voteAverage;
+		this.overview = overview;
+		this.posterPath = posterPath;
+	}
+
 	protected Result(Parcel in) {
 		adult = in.readByte() != 0x00;
 		backdropPath = in.readString();
@@ -105,7 +116,7 @@ public class Result implements Parcelable {
 	}
 
 	@SuppressWarnings("unused")
-	public static final Creator<Result> CREATOR = new Creator<Result>() {
+	public static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
 		@Override
 		public Result createFromParcel(Parcel in) {
 			return new Result(in);
