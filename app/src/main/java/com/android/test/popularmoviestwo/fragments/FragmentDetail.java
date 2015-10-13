@@ -1,7 +1,9 @@
 package com.android.test.popularmoviestwo.fragments;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -16,6 +18,8 @@ import com.android.test.popularmoviestwo.async.Result;
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.activities.ActivityDetail;
+import com.android.test.popularmoviestwo.database.MoviesContract;
+import com.android.test.popularmoviestwo.database.TableHelperFavourites;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -25,6 +29,7 @@ public class FragmentDetail extends Fragment{
 	MovieApi mAPi;
 	IFragmentDetailCallback mCallback;
 	ImageView mImage;
+	TextView mFavourites;
 
 	public interface IFragmentDetailCallback{
 		void onMoviePosterLoaded(View v);
@@ -33,6 +38,8 @@ public class FragmentDetail extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_detail, container, false);
+
+		mFavourites = (TextView) view.findViewById(R.id.fragment_detail_favourites);
 
 		return view;
 	}
@@ -46,6 +53,18 @@ public class FragmentDetail extends Fragment{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+
+		mFavourites.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(mMovie != null){
+					ContentValues values = new ContentValues();
+					values.put(TableHelperFavourites.COL_MOVIE_ID, mMovie.id);
+					values.put(TableHelperFavourites.COL_MOVIE_TITLE, mMovie.title);
+					Uri insertedUri = getActivity().getContentResolver().insert(MoviesContract.URI_FAVOURITES_INSERT, values);
+				}
+			}
+		});
 
 		mAPi = new MovieApi(getActivity());
 

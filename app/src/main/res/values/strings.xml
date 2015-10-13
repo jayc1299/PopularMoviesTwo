@@ -2,7 +2,10 @@
 	<string name="app_name">Popular Movies Two</string>
 	<string name="no_movies_found">Unfortunately we have been unable to retrieve any movies. Have you checked your internet connection?</string>
 
+	<string name="favourites_provider">com.android.test.popularmoviestwo</string>
+
 	<string name="action_settings">Settings</string>
+	<string name="action_favourites">Favourites</string>
 	<string name="movieTransitionName">movieTransition</string>
 
 	<string name="pref_sort_key">sort_order</string>
@@ -13,5 +16,7 @@
 	<string name="fragment_detail_release_date">Release Date</string>
 	<string name="fragment_detail_rating">Rating</string>
 	<string name="fragment_detail_image_alt">Movie Poster</string>
+
+	<string name="activity_favourites_title">Favourites</string>
 
 </resources>

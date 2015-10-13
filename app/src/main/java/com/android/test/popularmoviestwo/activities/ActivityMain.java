@@ -35,9 +35,13 @@ public class ActivityMain extends AppCompatActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 
-		if (id == R.id.action_settings) {
-			startActivityForResult(new Intent(ActivityMain.this, ActivitySettings.class), REQUEST_CODE_SETTINGS);
-			return true;
+		switch (id){
+			case R.id.action_settings:
+				startActivityForResult(new Intent(ActivityMain.this, ActivitySettings.class), REQUEST_CODE_SETTINGS);
+				return true;
+			case R.id.action_favourites:
+				startActivity(new Intent(ActivityMain.this, ActivityFavourites.class));
+				return true;
 		}
 
 		return super.onOptionsItemSelected(item);
