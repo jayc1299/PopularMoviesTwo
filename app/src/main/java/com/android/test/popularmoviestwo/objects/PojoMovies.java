@@ -1,4 +1,4 @@
-package com.android.test.popularmoviestwo.async;
+package com.android.test.popularmoviestwo.objects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

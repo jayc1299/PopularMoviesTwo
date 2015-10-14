@@ -1,7 +1,6 @@
 package com.android.test.popularmoviestwo.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import android.widget.ImageView;
 
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.R;
-import com.android.test.popularmoviestwo.async.Result;
+import com.android.test.popularmoviestwo.objects.Result;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

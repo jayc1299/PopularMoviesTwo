@@ -23,8 +23,8 @@ import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.activities.ActivityDetail;
 import com.android.test.popularmoviestwo.adapters.AdapterMovies;
 import com.android.test.popularmoviestwo.async.AsyncGetMoviePosters;
-import com.android.test.popularmoviestwo.async.PojoMovies;
-import com.android.test.popularmoviestwo.async.Result;
+import com.android.test.popularmoviestwo.objects.PojoMovies;
+import com.android.test.popularmoviestwo.objects.Result;
 import com.android.test.popularmoviestwo.database.MoviesContract;
 import com.android.test.popularmoviestwo.database.TableHelperFavourites;
 

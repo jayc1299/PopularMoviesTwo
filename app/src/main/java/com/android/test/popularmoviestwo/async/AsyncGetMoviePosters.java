@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.android.test.popularmoviestwo.MovieApi;
+import com.android.test.popularmoviestwo.objects.PojoMovies;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
