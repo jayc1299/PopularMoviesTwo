@@ -36,14 +36,6 @@
 				android:value=".activities.ActivityMain" />
 		</activity>
 
-		<activity android:name=".activities.ActivityFavourites"
-			android:label="@string/activity_favourites_title"
-			android:parentActivityName=".activities.ActivityMain">
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".activities.ActivityMain" />
-		</activity>
-
 		<provider
 			android:authorities="@string/favourites_provider"
 			android:name=".database.FavouritesProvider" />

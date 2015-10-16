@@ -34,6 +34,7 @@ public class FragmentDetail extends Fragment{
 
 	public interface IFragmentDetailCallback{
 		void onMoviePosterLoaded(View v);
+		void onMovieUnFavoured();
 	}
 
 	@Override
@@ -85,6 +86,7 @@ public class FragmentDetail extends Fragment{
 						String[] args = {String.valueOf(mMovie.id)};
 						getActivity().getContentResolver().delete(MoviesContract.URI_FAVOURITES_INSERT, where, args);
 						v.setSelected(false);
+						mCallback.onMovieUnFavoured();
 					}
 				}
 			}

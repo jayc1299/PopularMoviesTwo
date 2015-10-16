@@ -21,6 +21,7 @@ import android.widget.GridView;
 
 import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.activities.ActivityDetail;
+import com.android.test.popularmoviestwo.activities.ActivityMain;
 import com.android.test.popularmoviestwo.adapters.AdapterMovies;
 import com.android.test.popularmoviestwo.async.AsyncGetMoviePosters;
 import com.android.test.popularmoviestwo.objects.PojoMovies;
@@ -44,6 +45,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 
 		mGridview = (GridView) view.findViewById(R.id.fragment_main_gridview);
+		mGridview.setEmptyView(view.findViewById(R.id.fragment_main_no_results));
 		return view;
 	}
 
@@ -65,6 +67,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 				if(mAdapter != null && mAdapter.getCount() > 0) {
 					Intent intent = new Intent(getActivity(), ActivityDetail.class);
 					intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, mAdapter.getItem(position));
+					intent.putExtra(ActivityDetail.TAG_IS_ON_FAVOURITES, isShowFavourites());
 
 					ActivityOptions options = null;
 					// create the transition animation - the images in the layouts of both activities are defined with android:transitionName="MyTransition"
@@ -73,9 +76,9 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 					}
 					// start the new activity
 					if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && options != null) {
-						getActivity().startActivity(intent, options.toBundle());
+						getActivity().startActivityForResult(intent, ActivityMain.REQUEST_CODE_DETAIL, options.toBundle());
 					}else{
-						startActivity(intent);
+						getActivity().startActivityForResult(intent, ActivityMain.REQUEST_CODE_DETAIL);
 					}
 				}
 			}
@@ -83,10 +86,10 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	}
 
 	/**
-	 * Called sometimes from Activity when settings exits. Check do we require favourites only? If not show movies.
+	 * Called from activity as well, in response to settings or detail page closing and refresh required.
 	 */
 	public void showTiles(){
-		if(showFavourites()){
+		if(isShowFavourites()){
 			getFavourites();
 		}else{
 			getMovies();
@@ -94,9 +97,10 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	}
 
 	/**
-	 * Get movies from web. This method is public as it may be refreshed from activity.
+	 * Get movies from web.
 	 */
 	private void getMovies(){
+		Log.d(FragmentMain.class.getSimpleName(), "get movies");
 		AsyncGetMoviePosters async = new AsyncGetMoviePosters(this);
 		async.execute(getActivity());
 	}
@@ -105,6 +109,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	 * Get favourites from local db
 	 */
 	private void getFavourites(){
+		Log.d(FragmentMain.class.getSimpleName(), "getFavourites");
 		getLoaderManager().restartLoader(FAVOURITES, null, this);
 	}
 
@@ -116,7 +121,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		}
 	}
 
-	private boolean showFavourites(){
+	private boolean isShowFavourites(){
 		return mPrefs.getBoolean(getActivity().getString(R.string.pref_favs_key), false);
 	}
 
@@ -138,7 +143,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		List<Result> items = new ArrayList<>();
 		Result fav;
-		if (getView() != null && showFavourites()) {
+		if (getView() != null && isShowFavourites()) {
 			int id = loader.getId();
 			switch (id) {
 				case FAVOURITES: {
