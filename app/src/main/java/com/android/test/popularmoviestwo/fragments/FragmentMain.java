@@ -100,7 +100,6 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	 * Get movies from web.
 	 */
 	private void getMovies(){
-		Log.d(FragmentMain.class.getSimpleName(), "get movies");
 		AsyncGetMoviePosters async = new AsyncGetMoviePosters(this);
 		async.execute(getActivity());
 	}
@@ -109,7 +108,6 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	 * Get favourites from local db
 	 */
 	private void getFavourites(){
-		Log.d(FragmentMain.class.getSimpleName(), "getFavourites");
 		getLoaderManager().restartLoader(FAVOURITES, null, this);
 	}
 
@@ -141,13 +139,17 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		Log.d(FragmentMain.class.getSimpleName(), "onLoadFinished");
 		List<Result> items = new ArrayList<>();
 		Result fav;
 		if (getView() != null && isShowFavourites()) {
+			Log.d(FragmentMain.class.getSimpleName(), "1");
 			int id = loader.getId();
 			switch (id) {
 				case FAVOURITES: {
+					Log.d(FragmentMain.class.getSimpleName(), "2");
 					if(data != null && data.moveToFirst()) {
+						Log.d(FragmentMain.class.getSimpleName(), "3");
 						while (!data.isAfterLast()) {
 							fav = new Result(
 									data.getInt(data.getColumnIndex(TableHelperFavourites.COL_MOVIE_ID)),
@@ -159,9 +161,9 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 							items.add(fav);
 							data.moveToNext();
 						}
-						Log.d(FragmentMain.class.getSimpleName(), "items size:" + items.size());
-						mAdapter.updateItems(items);
 					}
+					Log.d(FragmentMain.class.getSimpleName(), "items size:" + items.size());
+					mAdapter.updateItems(items);
 				}
 			}
 		}

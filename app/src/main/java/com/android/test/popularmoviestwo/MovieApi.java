@@ -44,8 +44,29 @@ public class MovieApi {
 	 */
 	public URL getMoviesUrl(){
 		Uri uri = Uri.parse(mMainUrl).buildUpon()
+				.appendEncodedPath(mContext.getString(R.string.moviepath))
 				.appendQueryParameter("api_key", getApiKey(mContext))
 				.appendQueryParameter("sort_by", getSortBy(mContext))
+				.build();
+		URL url = null;
+		try {
+			url = new URL(uri.toString());
+		} catch (MalformedURLException e) {
+			Log.e(MovieApi.class.getSimpleName(), "MalformedURLException");
+			return null;
+		}
+		return url;
+	}
+
+	/**
+	 * Get Movie Url for most popular movies.
+	 *
+	 * @return URL the completed url with api key and sort by ordering.
+	 */
+	public URL getTrailersUrl(int movieId){
+		Uri uri = Uri.parse(mMainUrl).buildUpon()
+				.appendEncodedPath(mContext.getString(R.string.trailerpath, String.valueOf(movieId)))
+				.appendQueryParameter("api_key", getApiKey(mContext))
 				.build();
 		URL url = null;
 		try {

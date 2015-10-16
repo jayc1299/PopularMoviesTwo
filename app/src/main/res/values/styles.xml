@@ -20,6 +20,7 @@
 	<style name="movieDetailSubHeader" parent="defaultText">
 		<item name="android:textStyle">bold</item>
 		<item name="android:textSize">14sp</item>
+		<item name="android:textColor">@color/colorSecondText</item>
 	</style>
 
 	<style name="movieDetailInfo" parent="defaultText">

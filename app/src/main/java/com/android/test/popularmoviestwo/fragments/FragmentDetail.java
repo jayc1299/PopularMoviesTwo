@@ -9,12 +9,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.test.popularmoviestwo.async.AsyncGetMovieTrailers;
+import com.android.test.popularmoviestwo.objects.ArgsAsyncTrailers;
+import com.android.test.popularmoviestwo.objects.PojoTrailers;
 import com.android.test.popularmoviestwo.objects.Result;
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.R;
@@ -24,13 +28,21 @@ import com.android.test.popularmoviestwo.database.TableHelperFavourites;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-public class FragmentDetail extends Fragment{
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IAsyncTrailers {
 
 	Result mMovie;
 	MovieApi mAPi;
 	IFragmentDetailCallback mCallback;
 	ImageView mImage;
 	TextView mFavourites;
+
+	@Override
+	public void onTrailersReceived(PojoTrailers movies) {
+
+	}
 
 	public interface IFragmentDetailCallback{
 		void onMoviePosterLoaded(View v);
@@ -64,10 +76,20 @@ public class FragmentDetail extends Fragment{
 			mMovie = intent.getParcelableExtra(ActivityDetail.TAG_MOVIE_OBJECT);
 		}
 
+		Log.d(FragmentDetail.class.getSimpleName(), "mMovie.id:" + mMovie.id);
+
 		//Toggle making movie a favourite
 		mFavourites.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				ArgsAsyncTrailers args = new ArgsAsyncTrailers();
+				args.setContext(getActivity());
+				args.setMovieId(mMovie.id);
+
+				AsyncGetMovieTrailers async = new AsyncGetMovieTrailers(FragmentDetail.this);
+				async.execute(args);
+
+				/*
 				if(mMovie != null){
 					if(!isFavourite()) {
 						//Add new favourite
@@ -89,6 +111,7 @@ public class FragmentDetail extends Fragment{
 						mCallback.onMovieUnFavoured();
 					}
 				}
+				*/
 			}
 		});
 
@@ -125,7 +148,7 @@ public class FragmentDetail extends Fragment{
 		//Text
 		((TextView) getView().findViewById(R.id.fragment_detail_title)).setText(mMovie.title);
 		((TextView) getView().findViewById(R.id.fragment_detail_release_date)).setText(mMovie.releaseDate);
-		((TextView) getView().findViewById(R.id.fragment_detail_vote_average)).setText(String.valueOf(mMovie.voteAverage));
+		((TextView) getView().findViewById(R.id.fragment_detail_vote_average)).setText(getString(R.string.fragment_detail_rating_text, String.valueOf(mMovie.voteAverage)));
 		((TextView) getView().findViewById(R.id.fragment_detail_synopsis)).setText(String.valueOf(mMovie.overview));
 
 		//Set image
