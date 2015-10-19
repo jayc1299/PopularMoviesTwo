@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Result implements Parcelable {
+public class Movie implements Parcelable {
 
 	@SerializedName("adult")
 	@Expose
@@ -54,9 +54,9 @@ public class Result implements Parcelable {
 	@Expose
 	public int voteCount;
 
-	public Result(){}
+	public Movie(){}
 
-	public Result(int id, String title, String releaseDate, float voteAverage, String overview, String posterPath){
+	public Movie(int id, String title, String releaseDate, float voteAverage, String overview, String posterPath){
 		this.id = id;
 		this.title = title;
 		this.releaseDate = releaseDate;
@@ -65,7 +65,7 @@ public class Result implements Parcelable {
 		this.posterPath = posterPath;
 	}
 
-	protected Result(Parcel in) {
+	protected Movie(Parcel in) {
 		adult = in.readByte() != 0x00;
 		backdropPath = in.readString();
 		if (in.readByte() == 0x01) {
@@ -116,15 +116,15 @@ public class Result implements Parcelable {
 	}
 
 	@SuppressWarnings("unused")
-	public static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
+	public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
 		@Override
-		public Result createFromParcel(Parcel in) {
-			return new Result(in);
+		public Movie createFromParcel(Parcel in) {
+			return new Movie(in);
 		}
 
 		@Override
-		public Result[] newArray(int size) {
-			return new Result[size];
+		public Movie[] newArray(int size) {
+			return new Movie[size];
 		}
 	};
 }

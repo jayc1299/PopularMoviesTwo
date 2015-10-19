@@ -59,13 +59,33 @@ public class MovieApi {
 	}
 
 	/**
-	 * Get Movie Url for most popular movies.
+	 * Get Trailers Url for a specific movie
 	 *
-	 * @return URL the completed url with api key and sort by ordering.
+	 * @return URL the completed url with movie id and api key
 	 */
 	public URL getTrailersUrl(int movieId){
 		Uri uri = Uri.parse(mMainUrl).buildUpon()
 				.appendEncodedPath(mContext.getString(R.string.trailerpath, String.valueOf(movieId)))
+				.appendQueryParameter("api_key", getApiKey(mContext))
+				.build();
+		URL url = null;
+		try {
+			url = new URL(uri.toString());
+		} catch (MalformedURLException e) {
+			Log.e(MovieApi.class.getSimpleName(), "MalformedURLException");
+			return null;
+		}
+		return url;
+	}
+
+	/**
+	 * Get Reviews Url for a specific movie
+	 *
+	 * @return URL the completed url with movie id and api key
+	 */
+	public URL getReviewsUrl(int movieId){
+		Uri uri = Uri.parse(mMainUrl).buildUpon()
+				.appendEncodedPath(mContext.getString(R.string.reviewspath, String.valueOf(movieId)))
 				.appendQueryParameter("api_key", getApiKey(mContext))
 				.build();
 		URL url = null;

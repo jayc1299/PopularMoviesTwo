@@ -28,7 +28,6 @@ public class Trailer {
 	private String type;
 
 	/**
-	 *
 	 * @return
 	 * The id
 	 */
@@ -37,7 +36,6 @@ public class Trailer {
 	}
 
 	/**
-	 *
 	 * @param id
 	 * The id
 	 */
@@ -45,13 +43,7 @@ public class Trailer {
 		this.id = id;
 	}
 
-	public Trailer withId(String id) {
-		this.id = id;
-		return this;
-	}
-
 	/**
-	 *
 	 * @return
 	 * The iso6391
 	 */
@@ -60,7 +52,6 @@ public class Trailer {
 	}
 
 	/**
-	 *
 	 * @param iso6391
 	 * The iso_639_1
 	 */
@@ -68,13 +59,7 @@ public class Trailer {
 		this.iso6391 = iso6391;
 	}
 
-	public Trailer withIso6391(String iso6391) {
-		this.iso6391 = iso6391;
-		return this;
-	}
-
 	/**
-	 *
 	 * @return
 	 * The key
 	 */
@@ -83,7 +68,6 @@ public class Trailer {
 	}
 
 	/**
-	 *
 	 * @param key
 	 * The key
 	 */
@@ -91,13 +75,7 @@ public class Trailer {
 		this.key = key;
 	}
 
-	public Trailer withKey(String key) {
-		this.key = key;
-		return this;
-	}
-
 	/**
-	 *
 	 * @return
 	 * The name
 	 */
@@ -106,7 +84,6 @@ public class Trailer {
 	}
 
 	/**
-	 *
 	 * @param name
 	 * The name
 	 */
@@ -114,13 +91,7 @@ public class Trailer {
 		this.name = name;
 	}
 
-	public Trailer withName(String name) {
-		this.name = name;
-		return this;
-	}
-
 	/**
-	 *
 	 * @return
 	 * The site
 	 */
@@ -129,7 +100,6 @@ public class Trailer {
 	}
 
 	/**
-	 *
 	 * @param site
 	 * The site
 	 */
@@ -137,13 +107,7 @@ public class Trailer {
 		this.site = site;
 	}
 
-	public Trailer withSite(String site) {
-		this.site = site;
-		return this;
-	}
-
 	/**
-	 *
 	 * @return
 	 * The size
 	 */
@@ -152,7 +116,6 @@ public class Trailer {
 	}
 
 	/**
-	 *
 	 * @param size
 	 * The size
 	 */
@@ -160,13 +123,7 @@ public class Trailer {
 		this.size = size;
 	}
 
-	public Trailer withSize(Integer size) {
-		this.size = size;
-		return this;
-	}
-
 	/**
-	 *
 	 * @return
 	 * The type
 	 */
@@ -175,16 +132,10 @@ public class Trailer {
 	}
 
 	/**
-	 *
 	 * @param type
 	 * The type
 	 */
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public Trailer withType(String type) {
-		this.type = type;
-		return this;
 	}
 }

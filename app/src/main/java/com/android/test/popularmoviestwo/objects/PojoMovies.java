@@ -13,7 +13,7 @@ public class PojoMovies {
 	public int page;
 	@SerializedName("results")
 	@Expose
-	public List<Result> results = new ArrayList<Result>();
+	public List<Movie> movies = new ArrayList<Movie>();
 	@SerializedName("total_pages")
 	@Expose
 	public int totalPages;

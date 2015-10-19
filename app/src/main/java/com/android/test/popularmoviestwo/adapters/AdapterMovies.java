@@ -9,19 +9,19 @@ import android.widget.ImageView;
 
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.R;
-import com.android.test.popularmoviestwo.objects.Result;
+import com.android.test.popularmoviestwo.objects.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class AdapterMovies extends ArrayAdapter<Result>{
+public class AdapterMovies extends ArrayAdapter<Movie>{
 
 	LayoutInflater mInflater;
-	List<Result> mMovies;
+	List<Movie> mMovies;
 	Context mContext;
 	MovieApi mApi;
 
-	public AdapterMovies(Context context, int resource, List<Result> movies) {
+	public AdapterMovies(Context context, int resource, List<Movie> movies) {
 		super(context, resource, movies);
 		mInflater = LayoutInflater.from(context);
 		mMovies = movies;
@@ -48,7 +48,7 @@ public class AdapterMovies extends ArrayAdapter<Result>{
 		return convertView;
 	}
 
-	public void updateItems(List<Result> movies){
+	public void updateItems(List<Movie> movies){
 		clear();
 		addAll(movies);
 	}

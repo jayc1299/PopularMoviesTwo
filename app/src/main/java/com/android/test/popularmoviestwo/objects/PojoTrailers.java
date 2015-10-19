@@ -6,26 +6,25 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PojoTrailers {
+public class PojoTrailers{
 
 	@SerializedName("id")
 	@Expose
 	private Integer id;
 	@SerializedName("results")
 	@Expose
-	private List<Trailer> results = new ArrayList<Trailer>();
+	private List<Trailer> trailers = new ArrayList<>();
 
 	/**
 	 *
 	 * @return
 	 * The id
 	 */
-	public Integer getId() {
-		return id;
+	public long getId() {
+		return id.longValue();
 	}
 
 	/**
-	 *
 	 * @param id
 	 * The id
 	 */
@@ -33,32 +32,19 @@ public class PojoTrailers {
 		this.id = id;
 	}
 
-	public PojoTrailers withId(Integer id) {
-		this.id = id;
-		return this;
-	}
-
 	/**
-	 *
 	 * @return
-	 * The results
+	 * The movies
 	 */
 	public List<Trailer> getResults() {
-		return results;
+		return trailers;
 	}
 
 	/**
-	 *
-	 * @param results
-	 * The results
+	 * @param trailers
+	 * The movies
 	 */
-	public void setResults(List<Trailer> results) {
-		this.results = results;
+	public void setResults(List<Trailer> trailers) {
+		this.trailers = trailers;
 	}
-
-	public PojoTrailers withResults(List<Trailer> results) {
-		this.results = results;
-		return this;
-	}
-
 }

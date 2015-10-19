@@ -24,8 +24,8 @@ import com.android.test.popularmoviestwo.activities.ActivityDetail;
 import com.android.test.popularmoviestwo.activities.ActivityMain;
 import com.android.test.popularmoviestwo.adapters.AdapterMovies;
 import com.android.test.popularmoviestwo.async.AsyncGetMoviePosters;
+import com.android.test.popularmoviestwo.objects.Movie;
 import com.android.test.popularmoviestwo.objects.PojoMovies;
-import com.android.test.popularmoviestwo.objects.Result;
 import com.android.test.popularmoviestwo.database.MoviesContract;
 import com.android.test.popularmoviestwo.database.TableHelperFavourites;
 
@@ -56,7 +56,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 		//Set empty adapter, items added later
-		mAdapter = new AdapterMovies(getActivity(), R.layout.item_movie, new ArrayList<Result>());
+		mAdapter = new AdapterMovies(getActivity(), R.layout.item_movie, new ArrayList<Movie>());
 		mGridview.setAdapter(mAdapter);
 
 		showTiles();
@@ -114,8 +114,8 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	@Override
 	public void onMoviesReceived(PojoMovies movies) {
 		if(movies != null) {
-			Log.d(FragmentMain.class.getSimpleName(), "movies:" + movies.results.size());
-			mAdapter.updateItems(movies.results);
+			Log.d(FragmentMain.class.getSimpleName(), "movies:" + movies.movies.size());
+			mAdapter.updateItems(movies.movies);
 		}
 	}
 
@@ -140,8 +140,8 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		Log.d(FragmentMain.class.getSimpleName(), "onLoadFinished");
-		List<Result> items = new ArrayList<>();
-		Result fav;
+		List<Movie> items = new ArrayList<>();
+		Movie fav;
 		if (getView() != null && isShowFavourites()) {
 			Log.d(FragmentMain.class.getSimpleName(), "1");
 			int id = loader.getId();
@@ -151,7 +151,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 					if(data != null && data.moveToFirst()) {
 						Log.d(FragmentMain.class.getSimpleName(), "3");
 						while (!data.isAfterLast()) {
-							fav = new Result(
+							fav = new Movie(
 									data.getInt(data.getColumnIndex(TableHelperFavourites.COL_MOVIE_ID)),
 									data.getString(data.getColumnIndex(TableHelperFavourites.COL_MOVIE_TITLE)),
 									data.getString(data.getColumnIndex(TableHelperFavourites.COL_MOVIE_RELEASE_DATE)),

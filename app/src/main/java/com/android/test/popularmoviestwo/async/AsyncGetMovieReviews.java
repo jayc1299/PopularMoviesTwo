@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.objects.ArgsAsyncTrailers;
-import com.android.test.popularmoviestwo.objects.PojoMovies;
+import com.android.test.popularmoviestwo.objects.PojoReviews;
 import com.android.test.popularmoviestwo.objects.PojoTrailers;
 import com.google.gson.Gson;
 
@@ -19,27 +19,27 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class AsyncGetMovieTrailers extends AsyncTask<ArgsAsyncTrailers, Void, PojoTrailers> {
+public class AsyncGetMovieReviews extends AsyncTask<ArgsAsyncTrailers, Void, PojoReviews> {
 
 	private final int mTimeout = 15000;
 
-	public interface IAsyncTrailers{
-		void onTrailersReceived(PojoTrailers trailers);
+	public interface IAsyncReviews{
+		void onReviewsReceived(PojoReviews reviews);
 	}
 
-	private IAsyncTrailers mListener;
-	private String CLASS_TAG = "AsyncGetMovieTrailers";
+	private IAsyncReviews mListener;
+	private String CLASS_TAG = "AsyncGetMovieReviews";
 
-	public AsyncGetMovieTrailers(Activity activity){
-		mListener = (IAsyncTrailers) activity;
+	public AsyncGetMovieReviews(Activity activity){
+		mListener = (IAsyncReviews) activity;
 	}
 
-	public AsyncGetMovieTrailers(Fragment fragment){
-		mListener = (IAsyncTrailers) fragment;
+	public AsyncGetMovieReviews(Fragment fragment){
+		mListener = (IAsyncReviews) fragment;
 	}
 
 	@Override
-	protected PojoTrailers doInBackground(ArgsAsyncTrailers... params) {
+	protected PojoReviews doInBackground(ArgsAsyncTrailers... params) {
 		InputStream is = null;
 		Context context = params[0].getContext();
 		int movieId = params[0].getMovieId();
@@ -47,7 +47,7 @@ public class AsyncGetMovieTrailers extends AsyncTask<ArgsAsyncTrailers, Void, Po
 		MovieApi api = new MovieApi(context);
 
 		try {
-			URL url = api.getTrailersUrl(movieId);
+			URL url = api.getReviewsUrl(movieId);
 			Log.d(CLASS_TAG, "myUrl:" + url.toString());
 
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -64,11 +64,15 @@ public class AsyncGetMovieTrailers extends AsyncTask<ArgsAsyncTrailers, Void, Po
 			String contentAsString = readIt(is);
 
 			Gson gson = new Gson();
-			PojoTrailers trailers = gson.fromJson(contentAsString, PojoTrailers.class);
+			PojoReviews reviews = gson.fromJson(contentAsString, PojoReviews.class);
 
-			Log.d(CLASS_TAG, "Trailer: " + trailers.getResults().size());
+			Log.d(CLASS_TAG, "Reviews: " + reviews.getResults().size());
 
-			return trailers;
+			for(int i = 0; i < reviews.getResults().size(); i++){
+				Log.d(CLASS_TAG, reviews.getResults().get(i).getContent());
+			}
+
+			return reviews;
 
 			// Makes sure that the InputStream is closed after the app is
 			// finished using it.
@@ -88,11 +92,11 @@ public class AsyncGetMovieTrailers extends AsyncTask<ArgsAsyncTrailers, Void, Po
 	}
 
 	@Override
-	protected void onPostExecute(PojoTrailers movies) {
-		super.onPostExecute(movies);
+	protected void onPostExecute(PojoReviews reviews) {
+		super.onPostExecute(reviews);
 
 		if(mListener != null){
-			mListener.onTrailersReceived(movies);
+			mListener.onReviewsReceived(reviews);
 		}
 	}
 

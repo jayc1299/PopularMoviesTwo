@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,25 +22,33 @@ import android.widget.TextView;
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.activities.ActivityDetail;
-import com.android.test.popularmoviestwo.adapters.AdapterTrailers;
+import com.android.test.popularmoviestwo.adapters.AdapterDetails;
+import com.android.test.popularmoviestwo.async.AsyncGetMovieReviews;
 import com.android.test.popularmoviestwo.async.AsyncGetMovieTrailers;
 import com.android.test.popularmoviestwo.database.MoviesContract;
 import com.android.test.popularmoviestwo.database.TableHelperFavourites;
 import com.android.test.popularmoviestwo.objects.ArgsAsyncTrailers;
+import com.android.test.popularmoviestwo.objects.Detail;
+import com.android.test.popularmoviestwo.objects.Movie;
+import com.android.test.popularmoviestwo.objects.PojoReviews;
 import com.android.test.popularmoviestwo.objects.PojoTrailers;
-import com.android.test.popularmoviestwo.objects.Result;
+import com.android.test.popularmoviestwo.objects.Review;
+import com.android.test.popularmoviestwo.objects.Trailer;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IAsyncTrailers {
+import java.util.ArrayList;
+import java.util.List;
 
-	Result mMovie;
+public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IAsyncTrailers, AsyncGetMovieReviews.IAsyncReviews {
+
+	Movie mMovie;
 	MovieApi mAPi;
 	IFragmentDetailCallback mCallback;
 	ImageView mImage;
 	LinearLayout mFavourites;
 	ListView mListview;
-	AdapterTrailers mAdapter;
+	AdapterDetails mAdapter;
 	View mDetailView;
 
 	public interface IFragmentDetailCallback{
@@ -78,12 +87,16 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 			mMovie = intent.getParcelableExtra(ActivityDetail.TAG_MOVIE_OBJECT);
 		}
 
+		//Get trailers
 		ArgsAsyncTrailers args = new ArgsAsyncTrailers();
 		args.setContext(getActivity());
 		args.setMovieId(mMovie.id);
+		AsyncGetMovieTrailers asyncT = new AsyncGetMovieTrailers(FragmentDetail.this);
+		asyncT.execute(args);
 
-		AsyncGetMovieTrailers async = new AsyncGetMovieTrailers(FragmentDetail.this);
-		async.execute(args);
+		//Get reviews
+		AsyncGetMovieReviews asyncR = new AsyncGetMovieReviews(FragmentDetail.this);
+		asyncR.execute(args);
 
 		//Toggle making movie a favourite
 		mFavourites.setOnClickListener(new View.OnClickListener() {
@@ -116,10 +129,16 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				//Offset item (-1) for header
-				String url = getString(R.string.youtube_link) + mAdapter.getItem(position - 1).getKey();
-				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-				startActivity(intent);
+				if(position > 0) {
+					//Offset item (-1) for header
+					String url = mAdapter.getItem(position - 1).getUrl();
+					if(url != null) {
+						//Luanch youtube viewer
+						url = getString(R.string.youtube_link) + url;
+						Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+						startActivity(intent);
+					}
+				}
 			}
 		});
 
@@ -179,8 +198,60 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 
 	@Override
 	public void onTrailersReceived(PojoTrailers trailers) {
-		mAdapter = new AdapterTrailers(getActivity(), R.layout.item_trailer, trailers.getResults());
-		mListview.setAdapter(mAdapter);
-		mListview.addHeaderView(mDetailView);
+		Log.d("FragmentDetail", "trailers:" + trailers.getResults().size());
+		mTrailers = trailers.getResults();
+		onReceiveAsyncResults();
+	}
+
+	@Override
+	public void onReviewsReceived(PojoReviews reviews) {
+		Log.d("FragmentDetail", "reviews:" + reviews.getResults().size());
+		mReviews = reviews.getResults();
+		onReceiveAsyncResults();
+	}
+
+	List<Review> mReviews;
+	List<Trailer> mTrailers;
+	int runCount = 0;
+
+	private void onReceiveAsyncResults(){
+		runCount++;
+		ArrayList<Detail> details = new ArrayList<>();
+		if(runCount == 2){
+			Detail detail;
+			//Trailers must come first
+			for(Trailer trailer: mTrailers){
+				detail = new Detail();
+				detail.setTitle(trailer.getName());
+				detail.setUrl(trailer.getKey());
+				detail.setDrawable(android.R.drawable.ic_media_play);
+				details.add(detail);
+			}
+
+			if(mReviews.size() > 0) {
+				//Insert a heading between two groups
+				detail = new Detail();
+				detail.setIsReviewHeading(true);
+				details.add(detail);
+
+				//Then reviews
+				Review review;
+				for (int i = 0; i < mReviews.size(); i++) {
+					review = mReviews.get(i);
+					if (i >= getResources().getInteger(R.integer.max_reviews)) {
+						//Too many reviews, screen would be squashed.
+						break;
+					}
+					detail = new Detail();
+					detail.setTitle(review.getContent());
+					detail.setDrawable(android.R.drawable.ic_menu_edit);
+					details.add(detail);
+				}
+			}
+
+			mAdapter = new AdapterDetails(getActivity(), R.layout.item_detail, details);
+			mListview.setAdapter(mAdapter);
+			mListview.addHeaderView(mDetailView, null, false);
+		}
 	}
 }
