@@ -3,7 +3,7 @@ package com.android.test.popularmoviestwo.objects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Trailers {
+public class Trailer {
 
 	@SerializedName("id")
 	@Expose
@@ -45,7 +45,7 @@ public class Trailers {
 		this.id = id;
 	}
 
-	public Trailers withId(String id) {
+	public Trailer withId(String id) {
 		this.id = id;
 		return this;
 	}
@@ -68,7 +68,7 @@ public class Trailers {
 		this.iso6391 = iso6391;
 	}
 
-	public Trailers withIso6391(String iso6391) {
+	public Trailer withIso6391(String iso6391) {
 		this.iso6391 = iso6391;
 		return this;
 	}
@@ -91,7 +91,7 @@ public class Trailers {
 		this.key = key;
 	}
 
-	public Trailers withKey(String key) {
+	public Trailer withKey(String key) {
 		this.key = key;
 		return this;
 	}
@@ -114,7 +114,7 @@ public class Trailers {
 		this.name = name;
 	}
 
-	public Trailers withName(String name) {
+	public Trailer withName(String name) {
 		this.name = name;
 		return this;
 	}
@@ -137,7 +137,7 @@ public class Trailers {
 		this.site = site;
 	}
 
-	public Trailers withSite(String site) {
+	public Trailer withSite(String site) {
 		this.site = site;
 		return this;
 	}
@@ -160,7 +160,7 @@ public class Trailers {
 		this.size = size;
 	}
 
-	public Trailers withSize(Integer size) {
+	public Trailer withSize(Integer size) {
 		this.size = size;
 		return this;
 	}
@@ -183,7 +183,7 @@ public class Trailers {
 		this.type = type;
 	}
 
-	public Trailers withType(String type) {
+	public Trailer withType(String type) {
 		this.type = type;
 		return this;
 	}

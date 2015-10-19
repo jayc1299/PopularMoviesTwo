@@ -92,5 +92,23 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp" />
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="2dp"
+			android:layout_marginTop="10dp"
+			android:background="@color/colorPrimary" />
+
+		<TextView
+			style="@style/movieDetailSubHeader"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:text="@string/fragment_detail_trailers" />
+
+		<ListView
+			android:id="@+id/fragment_detail_trailers"
+			android:layout_width="match_parent"
+			android:layout_height="100dp" />
 	</LinearLayout>
 </ScrollView>

@@ -20,6 +20,7 @@
 	<string name="fragment_detail_rating">Rating</string>
 	<string name="fragment_detail_image_alt">Movie Poster</string>
 	<string name="fragment_detail_rating_text">%s / 10</string>
+	<string name="fragment_detail_trailers">Trailers</string>
 
 	<string name="activity_favourites_title">Favourites</string>
 

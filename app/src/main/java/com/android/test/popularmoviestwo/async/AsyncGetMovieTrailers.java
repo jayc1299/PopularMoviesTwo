@@ -24,7 +24,7 @@ public class AsyncGetMovieTrailers extends AsyncTask<ArgsAsyncTrailers, Void, Po
 	private final int mTimeout = 15000;
 
 	public interface IAsyncTrailers{
-		void onTrailersReceived(PojoTrailers movies);
+		void onTrailersReceived(PojoTrailers trailers);
 	}
 
 	private IAsyncTrailers mListener;
@@ -66,7 +66,7 @@ public class AsyncGetMovieTrailers extends AsyncTask<ArgsAsyncTrailers, Void, Po
 			Gson gson = new Gson();
 			PojoTrailers trailers = gson.fromJson(contentAsString, PojoTrailers.class);
 
-			Log.d(CLASS_TAG, "Trailers: " + trailers.getResults().size());
+			Log.d(CLASS_TAG, "Trailer: " + trailers.getResults().size());
 
 			for(int i = 0; i < trailers.getResults().size(); i++){
 				Log.d(CLASS_TAG, trailers.getResults().get(i).getName());

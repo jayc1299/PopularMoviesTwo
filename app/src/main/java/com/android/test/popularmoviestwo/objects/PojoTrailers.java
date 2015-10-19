@@ -13,7 +13,7 @@ public class PojoTrailers {
 	private Integer id;
 	@SerializedName("results")
 	@Expose
-	private List<Trailers> results = new ArrayList<Trailers>();
+	private List<Trailer> results = new ArrayList<Trailer>();
 
 	/**
 	 *
@@ -43,7 +43,7 @@ public class PojoTrailers {
 	 * @return
 	 * The results
 	 */
-	public List<Trailers> getResults() {
+	public List<Trailer> getResults() {
 		return results;
 	}
 
@@ -52,11 +52,11 @@ public class PojoTrailers {
 	 * @param results
 	 * The results
 	 */
-	public void setResults(List<Trailers> results) {
+	public void setResults(List<Trailer> results) {
 		this.results = results;
 	}
 
-	public PojoTrailers withResults(List<Trailers> results) {
+	public PojoTrailers withResults(List<Trailer> results) {
 		this.results = results;
 		return this;
 	}

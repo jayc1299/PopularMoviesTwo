@@ -14,8 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.test.popularmoviestwo.adapters.AdapterMovies;
+import com.android.test.popularmoviestwo.adapters.AdapterTrailers;
 import com.android.test.popularmoviestwo.async.AsyncGetMovieTrailers;
 import com.android.test.popularmoviestwo.objects.ArgsAsyncTrailers;
 import com.android.test.popularmoviestwo.objects.PojoTrailers;
@@ -29,6 +32,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IAsyncTrailers {
@@ -38,11 +42,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	IFragmentDetailCallback mCallback;
 	ImageView mImage;
 	TextView mFavourites;
-
-	@Override
-	public void onTrailersReceived(PojoTrailers movies) {
-
-	}
+	ListView mListview;
 
 	public interface IFragmentDetailCallback{
 		void onMoviePosterLoaded(View v);
@@ -54,6 +54,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
 		mFavourites = (TextView) view.findViewById(R.id.fragment_detail_favourites);
+		mListview = (ListView) view.findViewById(R.id.fragment_detail_trailers);
 
 		return view;
 	}
@@ -76,20 +77,17 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 			mMovie = intent.getParcelableExtra(ActivityDetail.TAG_MOVIE_OBJECT);
 		}
 
-		Log.d(FragmentDetail.class.getSimpleName(), "mMovie.id:" + mMovie.id);
+		ArgsAsyncTrailers args = new ArgsAsyncTrailers();
+		args.setContext(getActivity());
+		args.setMovieId(mMovie.id);
+
+		AsyncGetMovieTrailers async = new AsyncGetMovieTrailers(FragmentDetail.this);
+		async.execute(args);
 
 		//Toggle making movie a favourite
 		mFavourites.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				ArgsAsyncTrailers args = new ArgsAsyncTrailers();
-				args.setContext(getActivity());
-				args.setMovieId(mMovie.id);
-
-				AsyncGetMovieTrailers async = new AsyncGetMovieTrailers(FragmentDetail.this);
-				async.execute(args);
-
-				/*
 				if(mMovie != null){
 					if(!isFavourite()) {
 						//Add new favourite
@@ -111,7 +109,6 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 						mCallback.onMovieUnFavoured();
 					}
 				}
-				*/
 			}
 		});
 
@@ -169,4 +166,10 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		});
 	}
 
+	@Override
+	public void onTrailersReceived(PojoTrailers trailers) {
+		Log.d("FragmentMain", "trailers:" + trailers.getResults().size());
+		AdapterTrailers adapter = new AdapterTrailers(getActivity(), R.layout.item_trailer, trailers.getResults());
+		mListview.setAdapter(adapter);
+	}
 }
