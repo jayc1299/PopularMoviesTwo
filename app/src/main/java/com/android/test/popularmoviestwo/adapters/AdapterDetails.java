@@ -2,7 +2,6 @@ package com.android.test.popularmoviestwo.adapters;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,10 +35,12 @@ public class AdapterDetails extends ArrayAdapter<Detail>{
 
 		//We are a divider (heading) just return the view.
 		if(detail.getIsReviewHeading()){
-			return mInflater.inflate(R.layout.item_review_heading, null, false);
+			View view = mInflater.inflate(R.layout.item_review_heading, null, false);
+			view.setTag(null);
+			return view;
 		}
 
-		if(convertView == null) {
+		if(convertView == null || convertView.getTag() == null) {
 			convertView = mInflater.inflate(R.layout.item_detail, null, false);
 			viewHolder.title = (TextView) convertView.findViewById(R.id.item_detail_text);
 			viewHolder.img = (ImageView) convertView.findViewById(R.id.item_detail_img);
@@ -70,7 +71,7 @@ public class AdapterDetails extends ArrayAdapter<Detail>{
 
 	@Override
 	public boolean isEnabled(int position) {
-		return getItem(position).getUrl() != null;
+		return getItem(position).getUrl() != null || getItem(position).getAuthor() != null;
 	}
 
 	public class ViewHolder {

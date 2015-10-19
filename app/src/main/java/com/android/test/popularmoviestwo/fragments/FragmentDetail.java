@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.activities.ActivityDetail;
+import com.android.test.popularmoviestwo.activities.ActivityReview;
 import com.android.test.popularmoviestwo.adapters.AdapterDetails;
 import com.android.test.popularmoviestwo.async.AsyncGetMovieReviews;
 import com.android.test.popularmoviestwo.async.AsyncGetMovieTrailers;
@@ -131,11 +132,19 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if(position > 0) {
 					//Offset item (-1) for header
-					String url = mAdapter.getItem(position - 1).getUrl();
+					Detail detail = mAdapter.getItem(position - 1);
+					String url = detail.getUrl();
 					if(url != null) {
 						//Luanch youtube viewer
 						url = getString(R.string.youtube_link) + url;
 						Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+						startActivity(intent);
+					}else if(detail.getAuthor() != null){
+						//Launch review detail page
+						Intent intent = new Intent(getActivity(), ActivityReview.class);
+						intent.putExtra(ActivityReview.TAG_REVIEW, detail.getTitle());
+						intent.putExtra(ActivityReview.TAG_AUTHOR, detail.getAuthor());
+						intent.putExtra(ActivityReview.TAG_TITLE, mMovie.title);
 						startActivity(intent);
 					}
 				}
@@ -244,6 +253,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 					}
 					detail = new Detail();
 					detail.setTitle(review.getContent());
+					detail.setAuthor(review.getAuthor());
 					detail.setDrawable(android.R.drawable.ic_menu_edit);
 					details.add(detail);
 				}

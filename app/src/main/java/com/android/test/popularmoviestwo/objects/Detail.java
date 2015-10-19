@@ -7,6 +7,7 @@ public class Detail {
 	int drawable;
 	String url;
 	boolean isReviewHeading = false;
+	String author;
 
 	public long getId() {
 		return id;
@@ -46,5 +47,13 @@ public class Detail {
 
 	public void setIsReviewHeading(boolean isReviewHeading) {
 		this.isReviewHeading = isReviewHeading;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 }

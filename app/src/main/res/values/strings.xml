@@ -24,6 +24,10 @@
 	<string name="fragment_detail_trailers">Trailers</string>
 	<string name="fragment_detail_reviews">Reviews</string>
 
+	<string name="fragment_reviews_title">Review of %s</string>
+	<string name="fragment_reviews_author">Author</string>
+	<string name="fragment_reviews_review">Review</string>
+
 	<string name="activity_favourites_title">Favourites</string>
 
 </resources>
