@@ -9,31 +9,27 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.test.popularmoviestwo.adapters.AdapterMovies;
-import com.android.test.popularmoviestwo.adapters.AdapterTrailers;
-import com.android.test.popularmoviestwo.async.AsyncGetMovieTrailers;
-import com.android.test.popularmoviestwo.objects.ArgsAsyncTrailers;
-import com.android.test.popularmoviestwo.objects.PojoTrailers;
-import com.android.test.popularmoviestwo.objects.Result;
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.activities.ActivityDetail;
+import com.android.test.popularmoviestwo.adapters.AdapterTrailers;
+import com.android.test.popularmoviestwo.async.AsyncGetMovieTrailers;
 import com.android.test.popularmoviestwo.database.MoviesContract;
 import com.android.test.popularmoviestwo.database.TableHelperFavourites;
+import com.android.test.popularmoviestwo.objects.ArgsAsyncTrailers;
+import com.android.test.popularmoviestwo.objects.PojoTrailers;
+import com.android.test.popularmoviestwo.objects.Result;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Locale;
 
 public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IAsyncTrailers {
 
@@ -41,8 +37,10 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	MovieApi mAPi;
 	IFragmentDetailCallback mCallback;
 	ImageView mImage;
-	TextView mFavourites;
+	LinearLayout mFavourites;
 	ListView mListview;
+	AdapterTrailers mAdapter;
+	View mDetailView;
 
 	public interface IFragmentDetailCallback{
 		void onMoviePosterLoaded(View v);
@@ -53,8 +51,11 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-		mFavourites = (TextView) view.findViewById(R.id.fragment_detail_favourites);
+		mDetailView = inflater.inflate(R.layout.fragment_detail_header, container, false);
+
+		mFavourites = (LinearLayout) mDetailView.findViewById(R.id.fragment_detail_favourites);
 		mListview = (ListView) view.findViewById(R.id.fragment_detail_trailers);
+
 
 		return view;
 	}
@@ -88,8 +89,8 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		mFavourites.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(mMovie != null){
-					if(!isFavourite()) {
+				if (mMovie != null) {
+					if (!isFavourite()) {
 						//Add new favourite
 						ContentValues values = new ContentValues();
 						values.put(TableHelperFavourites.COL_MOVIE_ID, mMovie.id);
@@ -98,9 +99,9 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 						values.put(TableHelperFavourites.COL_MOVIE_AVG_VOTE, mMovie.voteAverage);
 						values.put(TableHelperFavourites.COL_MOVIE_OVERVIEW, mMovie.overview);
 						values.put(TableHelperFavourites.COL_MOVIE_IMG_PATH, mMovie.posterPath);
-						Uri insertedUri = getActivity().getContentResolver().insert(MoviesContract.URI_FAVOURITES_INSERT, values);
+						getActivity().getContentResolver().insert(MoviesContract.URI_FAVOURITES_INSERT, values);
 						v.setSelected(true);
-					}else{
+					} else {
 						//Delete from favourites for this movie
 						String where = TableHelperFavourites.COL_MOVIE_ID + "=?";
 						String[] args = {String.valueOf(mMovie.id)};
@@ -109,6 +110,16 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 						mCallback.onMovieUnFavoured();
 					}
 				}
+			}
+		});
+
+		mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				//Offset item (-1) for header
+				String url = getString(R.string.youtube_link) + mAdapter.getItem(position - 1).getKey();
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+				startActivity(intent);
 			}
 		});
 
@@ -143,13 +154,13 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		actionBar.setTitle(mMovie.title);
 
 		//Text
-		((TextView) getView().findViewById(R.id.fragment_detail_title)).setText(mMovie.title);
-		((TextView) getView().findViewById(R.id.fragment_detail_release_date)).setText(mMovie.releaseDate);
-		((TextView) getView().findViewById(R.id.fragment_detail_vote_average)).setText(getString(R.string.fragment_detail_rating_text, String.valueOf(mMovie.voteAverage)));
-		((TextView) getView().findViewById(R.id.fragment_detail_synopsis)).setText(String.valueOf(mMovie.overview));
+		((TextView) mDetailView.findViewById(R.id.fragment_detail_title)).setText(mMovie.title);
+		((TextView) mDetailView.findViewById(R.id.fragment_detail_release_date)).setText(mMovie.releaseDate);
+		((TextView) mDetailView.findViewById(R.id.fragment_detail_vote_average)).setText(getString(R.string.fragment_detail_rating_text, String.valueOf(mMovie.voteAverage)));
+		((TextView) mDetailView.findViewById(R.id.fragment_detail_synopsis)).setText(String.valueOf(mMovie.overview));
 
 		//Set image
-		mImage = (ImageView) getView().findViewById(R.id.fragment_detail_image);
+		mImage = (ImageView) mDetailView.findViewById(R.id.fragment_detail_image);
 		String path = mAPi.getImgUrl(mMovie.posterPath, true);
 
 		//Callback to activity to give go ahead to load.
@@ -168,8 +179,8 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 
 	@Override
 	public void onTrailersReceived(PojoTrailers trailers) {
-		Log.d("FragmentMain", "trailers:" + trailers.getResults().size());
-		AdapterTrailers adapter = new AdapterTrailers(getActivity(), R.layout.item_trailer, trailers.getResults());
-		mListview.setAdapter(adapter);
+		mAdapter = new AdapterTrailers(getActivity(), R.layout.item_trailer, trailers.getResults());
+		mListview.setAdapter(mAdapter);
+		mListview.addHeaderView(mDetailView);
 	}
 }

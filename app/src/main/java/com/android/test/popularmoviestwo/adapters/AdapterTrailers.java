@@ -44,11 +44,6 @@ public class AdapterTrailers extends ArrayAdapter<Trailer>{
 		return convertView;
 	}
 
-	public void updateItems(List<Trailer> trailers){
-		clear();
-		addAll(trailers);
-	}
-
 	public class ViewHolder {
 		TextView url;
 	}

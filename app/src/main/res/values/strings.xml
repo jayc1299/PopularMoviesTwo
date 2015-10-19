@@ -2,6 +2,7 @@
 	<string name="app_name">Popular Movies Two</string>
 	<string name="no_movies_found">Unfortunately we have been unable to retrieve any movies. Have you checked your internet connection?</string>
 
+	<string name="youtube_link">http://www.youtube.com/watch?v=</string>
 	<string name="favourites_provider">com.android.test.popularmoviestwo</string>
 
 	<string name="action_settings">Settings</string>
