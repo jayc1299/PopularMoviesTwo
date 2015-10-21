@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -36,26 +37,40 @@ public class ActivityDetail extends AppCompatActivity implements FragmentDetail.
 			mIsFromFavourites = args.getBoolean(TAG_IS_ON_FAVOURITES, false);
 		}
 
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.activity_main_container, new FragmentDetail(), FragmentDetail.class.getSimpleName());
-		ft.commit();
+		if(savedInstanceState == null) {
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.activity_main_container, new FragmentDetail(), FragmentDetail.class.getSimpleName());
+			ft.commit();
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.menu_activity_details, menu);
+		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case android.R.id.home:
+			case android.R.id.home: {
 				Intent intent = new Intent();
 				setResult(RESULT_OK, intent);
-				if(mIsFromFavourites && mIsUnfavouriting){
+				if (mIsFromFavourites && mIsUnfavouriting) {
 					//Do not wait for transition, we've probably removed a favourite and the animation
 					//back to a non existant element will cause a crash.
 					this.finish();
-				}else {
+				} else {
 					//Finish after the transition is done.
 					this.finishAfterTransition();
 				}
 				return true;
+			}
+			case R.id.action_share:{
+				return true;
+			}
+
 		}
 		return super.onOptionsItemSelected(item);
 	}

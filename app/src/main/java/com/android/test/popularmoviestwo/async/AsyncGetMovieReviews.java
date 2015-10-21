@@ -9,7 +9,6 @@ import android.util.Log;
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.objects.ArgsAsyncTrailers;
 import com.android.test.popularmoviestwo.objects.PojoReviews;
-import com.android.test.popularmoviestwo.objects.PojoTrailers;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -65,12 +64,6 @@ public class AsyncGetMovieReviews extends AsyncTask<ArgsAsyncTrailers, Void, Poj
 
 			Gson gson = new Gson();
 			PojoReviews reviews = gson.fromJson(contentAsString, PojoReviews.class);
-
-			Log.d(CLASS_TAG, "Reviews: " + reviews.getResults().size());
-
-			for(int i = 0; i < reviews.getResults().size(); i++){
-				Log.d(CLASS_TAG, reviews.getResults().get(i).getContent());
-			}
 
 			return reviews;
 

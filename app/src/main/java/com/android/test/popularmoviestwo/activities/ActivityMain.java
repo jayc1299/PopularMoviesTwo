@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,9 +26,11 @@ public class ActivityMain extends AppCompatActivity{
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.activity_main_container, new FragmentMain(), FragmentMain.class.getSimpleName());
-		ft.commit();
+		if (savedInstanceState == null) {
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.activity_main_container, new FragmentMain(), FragmentMain.class.getSimpleName());
+			ft.commit();
+		}
 	}
 
 	@Override
