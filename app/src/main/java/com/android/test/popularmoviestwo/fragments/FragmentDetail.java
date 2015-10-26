@@ -7,10 +7,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -51,6 +56,12 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	ListView mListview;
 	AdapterDetails mAdapter;
 	View mDetailView;
+	ShareActionProvider mShareActionProvider;
+	String mFirstTrailer;
+
+	List<Review> mReviews;
+	List<Trailer> mTrailers;
+	int mRunCount = 0;
 
 	public interface IFragmentDetailCallback{
 		void onMoviePosterLoaded(View v);
@@ -65,9 +76,18 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 
 		mFavourites = (LinearLayout) mDetailView.findViewById(R.id.fragment_detail_favourites);
 		mListview = (ListView) view.findViewById(R.id.fragment_detail_trailers);
-
+		setHasOptionsMenu(true);
 
 		return view;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_fragment_details, menu);
+		MenuItem menuItem = menu.findItem(R.id.action_share);
+
+		// Get the provider and hold onto it to set/change the share intent.
+		mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
 	}
 
 	@Override
@@ -207,26 +227,36 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 
 	@Override
 	public void onTrailersReceived(PojoTrailers trailers) {
-		Log.d("FragmentDetail", "trailers:" + trailers.getResults().size());
-		mTrailers = trailers.getResults();
+		if(trailers.getResults() != null && trailers.getResults().size() > 0) {
+			Log.d("FragmentDetail", "trailers:" + trailers.getResults().size());
+			//Update share
+			mFirstTrailer = trailers.getResults().get(0).getKey();
+			if (mShareActionProvider != null) {
+				mShareActionProvider.setShareIntent(getShareTrailerIntent());
+			}
+			//Set trailers
+			mTrailers = trailers.getResults();
+		}
 		onReceiveAsyncResults();
 	}
 
 	@Override
 	public void onReviewsReceived(PojoReviews reviews) {
-		Log.d("FragmentDetail", "reviews:" + reviews.getResults().size());
-		mReviews = reviews.getResults();
+		if(reviews.getResults() != null && reviews.getResults().size() > 0) {
+			Log.d("FragmentDetail", "reviews:" + reviews.getResults().size());
+			mReviews = reviews.getResults();
+		}
 		onReceiveAsyncResults();
 	}
 
-	List<Review> mReviews;
-	List<Trailer> mTrailers;
-	int runCount = 0;
-
+	/**
+	 * We only want to create the adapter when we have both results from the asyncs.
+	 *
+	 */
 	private void onReceiveAsyncResults(){
-		runCount++;
+		mRunCount++;
 		ArrayList<Detail> details = new ArrayList<>();
-		if(runCount == 2){
+		if(mRunCount == 2){
 			Detail detail;
 			//Trailers must come first
 			for(Trailer trailer: mTrailers){
@@ -237,7 +267,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 				details.add(detail);
 			}
 
-			if(mReviews.size() > 0) {
+			if(mReviews != null && mReviews.size() > 0) {
 				//Insert a heading between two groups
 				detail = new Detail();
 				detail.setIsReviewHeading(true);
@@ -262,6 +292,16 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 			mAdapter = new AdapterDetails(getActivity(), R.layout.item_detail, details);
 			mListview.setAdapter(mAdapter);
 			mListview.addHeaderView(mDetailView, null, false);
+			mRunCount = 0;
 		}
+	}
+
+	private Intent getShareTrailerIntent() {
+		Intent share = new Intent(android.content.Intent.ACTION_SEND);
+		share.setType("text/plain");
+		share.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.fragment_detail_share));
+		share.putExtra(Intent.EXTRA_TEXT, getString(R.string.youtube_link) + mFirstTrailer);
+
+		return share;
 	}
 }

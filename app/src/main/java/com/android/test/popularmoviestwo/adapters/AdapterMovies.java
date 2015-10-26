@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.R;
+import com.android.test.popularmoviestwo.Utils;
 import com.android.test.popularmoviestwo.objects.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -20,6 +22,7 @@ public class AdapterMovies extends ArrayAdapter<Movie>{
 	List<Movie> mMovies;
 	Context mContext;
 	MovieApi mApi;
+	boolean mHasInternet = true;
 
 	public AdapterMovies(Context context, int resource, List<Movie> movies) {
 		super(context, resource, movies);
@@ -27,6 +30,7 @@ public class AdapterMovies extends ArrayAdapter<Movie>{
 		mMovies = movies;
 		mContext = context;
 		mApi = new MovieApi(mContext);
+		mHasInternet = Utils.isInternetAvailable(mContext);
 	}
 
 	@Override
@@ -35,9 +39,19 @@ public class AdapterMovies extends ArrayAdapter<Movie>{
 
 		if(convertView == null) {
 			convertView = mInflater.inflate(R.layout.item_movie, null, false);
-			viewHolder.thumbImage = (ImageView) convertView;
+			viewHolder.thumbImage = (ImageView) convertView.findViewById(R.id.item_movie_image);
+			viewHolder.altText = (TextView) convertView.findViewById(R.id.image_movie_alt_text);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
+		}
+
+		if(!mHasInternet) {
+			viewHolder.altText.setText(getItem(position).title);
+			viewHolder.altText.setVisibility(View.VISIBLE);
+			viewHolder.thumbImage.setVisibility(View.GONE);
+		}else{
+			viewHolder.altText.setVisibility(View.GONE);
+			viewHolder.thumbImage.setVisibility(View.VISIBLE);
 		}
 
 		//Get image path and use picasso to load it.
@@ -49,11 +63,13 @@ public class AdapterMovies extends ArrayAdapter<Movie>{
 	}
 
 	public void updateItems(List<Movie> movies){
+		mHasInternet = Utils.isInternetAvailable(mContext);
 		clear();
 		addAll(movies);
 	}
 
 	public class ViewHolder {
 		ImageView thumbImage;
+		TextView altText;
 	}
 }

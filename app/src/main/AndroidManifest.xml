@@ -3,6 +3,7 @@
 	package="com.android.test.popularmoviestwo" >
 
 	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 	<application
 		android:allowBackup="true"
@@ -21,6 +22,7 @@
 
 		<activity android:name=".activities.ActivityDetail"
 			android:label="@string/app_name"
+			android:theme="@style/ToolbarColoredBackArrow"
 			android:parentActivityName=".activities.ActivityMain">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
