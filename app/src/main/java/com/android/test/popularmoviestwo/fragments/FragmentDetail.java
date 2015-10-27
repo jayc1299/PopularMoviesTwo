@@ -72,7 +72,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-		mDetailView = inflater.inflate(R.layout.fragment_detail_header, container, false);
+		mDetailView = inflater.inflate(R.layout.fragment_detail_header, null, false);
 
 		mFavourites = (LinearLayout) mDetailView.findViewById(R.id.fragment_detail_favourites);
 		mListview = (ListView) view.findViewById(R.id.fragment_detail_trailers);

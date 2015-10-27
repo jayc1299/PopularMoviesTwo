@@ -19,16 +19,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 
 import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.activities.ActivityDetail;
 import com.android.test.popularmoviestwo.activities.ActivityMain;
 import com.android.test.popularmoviestwo.adapters.AdapterMovies;
 import com.android.test.popularmoviestwo.async.AsyncGetMoviePosters;
-import com.android.test.popularmoviestwo.objects.Movie;
-import com.android.test.popularmoviestwo.objects.PojoMovies;
 import com.android.test.popularmoviestwo.database.MoviesContract;
 import com.android.test.popularmoviestwo.database.TableHelperFavourites;
+import com.android.test.popularmoviestwo.objects.Movie;
+import com.android.test.popularmoviestwo.objects.PojoMovies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +43,10 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	SharedPreferences mPrefs;
 	boolean mTabletMode = false;
 	IFragmentMainListener mCallback;
+	private int mPosition = ListView.INVALID_POSITION;
 
 	private static final int FAVOURITES = 1;
+	private static final String SELECTED_KEY = "selected_position";
 
 	public interface IFragmentMainListener{
 		void onMovieClicked(Movie movie);
@@ -74,9 +77,22 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 
 		showTiles();
 
+		if(mTabletMode){
+			mGridview.setNumColumns(1);
+		}
+
+		if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+			// The listview probably hasn't even been populated yet.  Actually perform the
+			// swapout in onLoadFinished.
+			mPosition = savedInstanceState.getInt(SELECTED_KEY);
+		}
+
+
 		mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Log.i("hello", "position" + position);
+				mPosition = position;
 				if (mAdapter != null && mAdapter.getCount() > 0) {
 					if (mTabletMode) {
 						//In tablet mode send message back to activity, so it can load the details in a pane.
@@ -110,6 +126,17 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		mCallback = (IFragmentMainListener) context;
 	}
 
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// When tablets rotate, the currently selected list item needs to be saved.
+		// When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
+		// so check for that before storing.
+		if (mPosition != ListView.INVALID_POSITION) {
+			outState.putInt(SELECTED_KEY, mPosition);
+		}
+		super.onSaveInstanceState(outState);
+	}
+
 	/**
 	 * Called from activity as well, in response to settings or detail page closing and refresh required.
 	 */
@@ -141,6 +168,12 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		if(movies != null) {
 			Log.d(FragmentMain.class.getSimpleName(), "movies:" + movies.movies.size());
 			mAdapter.updateItems(movies.movies);
+			if (mPosition != ListView.INVALID_POSITION) {
+				// If we don't need to restart the loader, and there's a desired position to restore
+				// to, do so now.
+				Log.i("hello", "jump too " + mPosition);
+				mGridview.setSelection(mPosition);
+			}
 		}
 	}
 

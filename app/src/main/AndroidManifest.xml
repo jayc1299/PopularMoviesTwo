@@ -22,7 +22,6 @@
 
 		<activity android:name=".activities.ActivityDetail"
 			android:label="@string/app_name"
-			android:theme="@style/ToolbarColoredBackArrow"
 			android:parentActivityName=".activities.ActivityMain">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -31,7 +30,7 @@
 
 		<activity android:name=".activities.ActivitySettings"
 			android:label="@string/app_name"
-			android:theme="@style/BaseTheme"
+			android:theme="@style/SettingsTheme"
 			android:parentActivityName=".activities.ActivityMain">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -40,7 +39,6 @@
 
 		<activity android:name=".activities.ActivityReview"
 			android:label="@string/app_name"
-			android:theme="@style/BaseTheme"
 			android:parentActivityName=".activities.ActivityDetail">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
