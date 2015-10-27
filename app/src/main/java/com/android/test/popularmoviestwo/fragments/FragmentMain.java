@@ -91,7 +91,6 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Log.i("hello", "position" + position);
 				mPosition = position;
 				if (mAdapter != null && mAdapter.getCount() > 0) {
 					if (mTabletMode) {
@@ -169,9 +168,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 			Log.d(FragmentMain.class.getSimpleName(), "movies:" + movies.movies.size());
 			mAdapter.updateItems(movies.movies);
 			if (mPosition != ListView.INVALID_POSITION) {
-				// If we don't need to restart the loader, and there's a desired position to restore
-				// to, do so now.
-				Log.i("hello", "jump too " + mPosition);
+				// If we don't need to restart the loader, and there's a desired position to restore to, do so now.
 				mGridview.setSelection(mPosition);
 			}
 		}
@@ -218,6 +215,10 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 					}
 					Log.d(FragmentMain.class.getSimpleName(), "items size:" + items.size());
 					mAdapter.updateItems(items);
+					if (mPosition != ListView.INVALID_POSITION) {
+						// If we don't need to restart the loader, and there's a desired position to restore to, do so now.
+						mGridview.setSelection(mPosition);
+					}
 				}
 			}
 		}

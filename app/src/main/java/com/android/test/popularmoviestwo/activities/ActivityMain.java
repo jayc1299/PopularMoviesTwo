@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -45,7 +44,6 @@ public class ActivityMain extends AppCompatActivity implements FragmentMain.IFra
 			ft.replace(R.id.activity_main_movies_container, frag, FragmentMain.class.getSimpleName());
 			ft.commit();
 		}
-		Log.i("hello", "1");
 	}
 
 	@Override
