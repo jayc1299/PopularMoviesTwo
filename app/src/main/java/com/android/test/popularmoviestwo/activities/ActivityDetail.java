@@ -23,7 +23,7 @@ public class ActivityDetail extends AppCompatActivity implements FragmentDetail.
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_default);
 
 		//Large artwork is loaded from web. So we need to delay the animation till this is done.
 		//This allowed for a smoother animation using shared element.
@@ -38,7 +38,7 @@ public class ActivityDetail extends AppCompatActivity implements FragmentDetail.
 
 		if(savedInstanceState == null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.activity_main_container, new FragmentDetail(), FragmentDetail.class.getSimpleName());
+			ft.replace(R.id.activity_default_container, new FragmentDetail(), FragmentDetail.class.getSimpleName());
 			ft.commit();
 		}
 	}

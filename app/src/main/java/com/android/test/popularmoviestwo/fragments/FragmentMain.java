@@ -1,6 +1,7 @@
 package com.android.test.popularmoviestwo.fragments;
 
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -34,11 +35,19 @@ import java.util.List;
 
 public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyncMovies, LoaderManager.LoaderCallbacks<Cursor>{
 
+	public static String TAG_TABLET_MODE = "tag_tablet_mode";
+
 	GridView mGridview;
 	AdapterMovies mAdapter;
 	SharedPreferences mPrefs;
+	boolean mTabletMode = false;
+	IFragmentMainListener mCallback;
 
 	private static final int FAVOURITES = 1;
+
+	public interface IFragmentMainListener{
+		void onMovieClicked(Movie movie);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +64,10 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
+		if(getArguments() != null){
+			mTabletMode = getArguments().getBoolean(TAG_TABLET_MODE, false);
+		}
+
 		//Set empty adapter, items added later
 		mAdapter = new AdapterMovies(getActivity(), R.layout.item_movie, new ArrayList<Movie>());
 		mGridview.setAdapter(mAdapter);
@@ -64,25 +77,37 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 		mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if(mAdapter != null && mAdapter.getCount() > 0) {
-					Intent intent = new Intent(getActivity(), ActivityDetail.class);
-					intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, mAdapter.getItem(position));
-					intent.putExtra(ActivityDetail.TAG_IS_ON_FAVOURITES, isShowFavourites());
+				if (mAdapter != null && mAdapter.getCount() > 0) {
+					if (mTabletMode) {
+						//In tablet mode send message back to activity, so it can load the details in a pane.
+						mCallback.onMovieClicked(mAdapter.getItem(position));
+					} else {
+						//Not in tablet mode, open a new activity
+						Intent intent = new Intent(getActivity(), ActivityDetail.class);
+						intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, mAdapter.getItem(position));
+						intent.putExtra(ActivityDetail.TAG_IS_ON_FAVOURITES, isShowFavourites());
 
-					ActivityOptions options = null;
-					// create the transition animation - the images in the layouts of both activities are defined with android:transitionName="MyTransition"
-					if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-						options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), view, getString(R.string.movieTransitionName));
-					}
-					// start the new activity
-					if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && options != null) {
-						getActivity().startActivityForResult(intent, ActivityMain.REQUEST_CODE_DETAIL, options.toBundle());
-					}else{
-						getActivity().startActivityForResult(intent, ActivityMain.REQUEST_CODE_DETAIL);
+						ActivityOptions options = null;
+						// create the transition animation - the images in the layouts of both activities are defined with android:transitionName="movieTransition"
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+							options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), view, getString(R.string.movieTransitionName));
+						}
+						// start the new activity
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && options != null) {
+							getActivity().startActivityForResult(intent, ActivityMain.REQUEST_CODE_DETAIL, options.toBundle());
+						} else {
+							getActivity().startActivityForResult(intent, ActivityMain.REQUEST_CODE_DETAIL);
+						}
 					}
 				}
 			}
 		});
+	}
+
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		mCallback = (IFragmentMainListener) context;
 	}
 
 	/**
@@ -139,17 +164,13 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.d(FragmentMain.class.getSimpleName(), "onLoadFinished");
 		List<Movie> items = new ArrayList<>();
 		Movie fav;
 		if (getView() != null && isShowFavourites()) {
-			Log.d(FragmentMain.class.getSimpleName(), "1");
 			int id = loader.getId();
 			switch (id) {
 				case FAVOURITES: {
-					Log.d(FragmentMain.class.getSimpleName(), "2");
 					if(data != null && data.moveToFirst()) {
-						Log.d(FragmentMain.class.getSimpleName(), "3");
 						while (!data.isAfterLast()) {
 							fav = new Movie(
 									data.getInt(data.getColumnIndex(TableHelperFavourites.COL_MOVIE_ID)),

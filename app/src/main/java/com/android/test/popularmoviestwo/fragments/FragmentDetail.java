@@ -93,7 +93,11 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		mCallback = (IFragmentDetailCallback) context;
+		try {
+			mCallback = (IFragmentDetailCallback) context;
+		}catch(ClassCastException e){
+			//We don't really care, ActivityMain doesn't need to implement this.
+		}
 	}
 
 	@Override
@@ -141,7 +145,9 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 						String[] args = {String.valueOf(mMovie.id)};
 						getActivity().getContentResolver().delete(MoviesContract.URI_FAVOURITES_INSERT, where, args);
 						v.setSelected(false);
-						mCallback.onMovieUnFavoured();
+						if(mCallback != null) {
+							mCallback.onMovieUnFavoured();
+						}
 					}
 				}
 			}
@@ -215,12 +221,16 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		Picasso.with(getActivity()).load(path).into(mImage, new Callback() {
 			@Override
 			public void onSuccess() {
-				mCallback.onMoviePosterLoaded(mImage);
+				if (mCallback != null) {
+					mCallback.onMoviePosterLoaded(mImage);
+				}
 			}
 
 			@Override
 			public void onError() {
-				mCallback.onMoviePosterLoaded(mImage);
+				if (mCallback != null) {
+					mCallback.onMoviePosterLoaded(mImage);
+				}
 			}
 		});
 	}
@@ -251,6 +261,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 
 	/**
 	 * We only want to create the adapter when we have both results from the asyncs.
+	 * So we need to combine the results into one arrayList and then create the adapter.
 	 *
 	 */
 	private void onReceiveAsyncResults(){

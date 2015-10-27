@@ -18,7 +18,7 @@ public class ActivityReview extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_default);
 
 		//Title
 		Bundle bundle = getIntent().getExtras();
@@ -28,7 +28,7 @@ public class ActivityReview extends AppCompatActivity {
 		}
 
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.activity_main_container, new FragmentReview(), FragmentReview.class.getSimpleName());
+		ft.replace(R.id.activity_default_container, new FragmentReview(), FragmentReview.class.getSimpleName());
 		ft.commit();
 	}
 

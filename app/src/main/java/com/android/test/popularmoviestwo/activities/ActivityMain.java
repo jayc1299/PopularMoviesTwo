@@ -6,18 +6,22 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.test.popularmoviestwo.R;
+import com.android.test.popularmoviestwo.fragments.FragmentDetail;
 import com.android.test.popularmoviestwo.fragments.FragmentMain;
+import com.android.test.popularmoviestwo.objects.Movie;
 
-public class ActivityMain extends AppCompatActivity{
+public class ActivityMain extends AppCompatActivity implements FragmentMain.IFragmentMainListener {
 
 	public static final int REQUEST_CODE_SETTINGS = 1;
 	public static final int REQUEST_CODE_DETAIL = 2;
 
 	SharedPreferences mPrefs;
+	boolean mTwoPainMode;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +30,19 @@ public class ActivityMain extends AppCompatActivity{
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-		if (savedInstanceState == null) {
+		if(findViewById(R.id.activity_main_detail_container) != null){
+			mTwoPainMode = true;
+		}else{
+			mTwoPainMode = false;
+		}
+
+		if(savedInstanceState == null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.activity_main_container, new FragmentMain(), FragmentMain.class.getSimpleName());
+			FragmentMain frag = new FragmentMain();
+			Bundle args = new Bundle();
+			args.putBoolean(FragmentMain.TAG_TABLET_MODE, mTwoPainMode);
+			frag.setArguments(args);
+			ft.replace(R.id.activity_main_movies_container, frag, FragmentMain.class.getSimpleName());
 			ft.commit();
 		}
 	}
@@ -91,5 +105,20 @@ public class ActivityMain extends AppCompatActivity{
 
 	private boolean isShowFavourites(){
 		return mPrefs.getBoolean(getString(R.string.pref_favs_key), false);
+	}
+
+	/**
+	 * Callback from Fragment Main if we need to show movie details in a split screen pane, instead of opening new activity
+	 * @param movie the movie details to show
+	 */
+	@Override
+	public void onMovieClicked(Movie movie) {
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		FragmentDetail frag = new FragmentDetail();
+		Intent intent = getIntent();
+		intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, movie);
+		intent.putExtra(ActivityDetail.TAG_IS_ON_FAVOURITES, isShowFavourites());
+		ft.replace(R.id.activity_main_detail_container, frag, FragmentDetail.class.getSimpleName());
+		ft.commit();
 	}
 }
