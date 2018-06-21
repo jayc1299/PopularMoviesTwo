@@ -31,4 +31,9 @@
 
 	<string name="activity_favourites_title">Favourites</string>
 
+	<string name="preferences_key_popularity">popularity.desc</string>
+	<string name="preferences_key_top_rated">vote_average.desc</string>
+	<string name="trailerpath">a%s</string>
+	<string name="reviewspath">b%s</string>
+
 </resources>

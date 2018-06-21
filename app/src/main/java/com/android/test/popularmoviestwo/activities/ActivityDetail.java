@@ -38,7 +38,7 @@ public class ActivityDetail extends AppCompatActivity implements FragmentDetail.
 
 		if(savedInstanceState == null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.activity_default_container, new FragmentDetail(), FragmentDetail.class.getSimpleName());
+			ft.replace(R.id.content, new FragmentDetail(), FragmentDetail.class.getSimpleName());
 			ft.commit();
 		}
 	}
