@@ -6,3 +6,4 @@
 /build
 /captures
 /app/src/main/res/values/movieapi.xml
+/gradle.properties
