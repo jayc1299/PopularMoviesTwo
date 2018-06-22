@@ -48,20 +48,22 @@ import java.util.List;
 
 public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IAsyncTrailers, AsyncGetMovieReviews.IAsyncReviews {
 
-	Movie mMovie;
-	MovieApi mAPi;
-	IFragmentDetailCallback mCallback;
-	ImageView mImage;
-	LinearLayout mFavourites;
-	ListView mListview;
-	AdapterDetails mAdapter;
-	View mDetailView;
-	ShareActionProvider mShareActionProvider;
-	String mFirstTrailer;
+	private static final String TAG = FragmentDetail.class.getSimpleName();
 
-	List<Review> mReviews;
-	List<Trailer> mTrailers;
-	int mRunCount = 0;
+	private Movie mMovie;
+	private MovieApi mAPi;
+	private IFragmentDetailCallback mCallback;
+	private ImageView mImage;
+	private LinearLayout mFavourites;
+	private ListView mListview;
+	private AdapterDetails mAdapter;
+	private View mDetailView;
+	private ShareActionProvider mShareActionProvider;
+	private String mFirstTrailer;
+
+	private List<Review> mReviews;
+	private List<Trailer> mTrailers;
+	private int mRunCount = 0;
 
 	public interface IFragmentDetailCallback{
 		void onMoviePosterLoaded(View v);
@@ -237,7 +239,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 
 	@Override
 	public void onTrailersReceived(PojoTrailers trailers) {
-		if(trailers.getResults() != null && trailers.getResults().size() > 0) {
+		if(trailers != null && trailers.getResults() != null && trailers.getResults().size() > 0) {
 			Log.d("FragmentDetail", "trailers:" + trailers.getResults().size());
 			//Update share
 			mFirstTrailer = trailers.getResults().get(0).getKey();
@@ -252,7 +254,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 
 	@Override
 	public void onReviewsReceived(PojoReviews reviews) {
-		if(reviews.getResults() != null && reviews.getResults().size() > 0) {
+		if(reviews != null && reviews.getResults() != null && reviews.getResults().size() > 0) {
 			Log.d("FragmentDetail", "reviews:" + reviews.getResults().size());
 			mReviews = reviews.getResults();
 		}
@@ -267,15 +269,18 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	private void onReceiveAsyncResults(){
 		mRunCount++;
 		ArrayList<Detail> details = new ArrayList<>();
+		Log.d(TAG, "onReceiveAsyncResults: " + mRunCount);
 		if(mRunCount == 2){
 			Detail detail;
 			//Trailers must come first
-			for(Trailer trailer: mTrailers){
-				detail = new Detail();
-				detail.setTitle(trailer.getName());
-				detail.setUrl(trailer.getKey());
-				detail.setDrawable(android.R.drawable.ic_media_play);
-				details.add(detail);
+			if(mTrailers != null && mTrailers.size() > 0) {
+				for (Trailer trailer : mTrailers) {
+					detail = new Detail();
+					detail.setTitle(trailer.getName());
+					detail.setUrl(trailer.getKey());
+					detail.setDrawable(android.R.drawable.ic_media_play);
+					details.add(detail);
+				}
 			}
 
 			if(mReviews != null && mReviews.size() > 0) {

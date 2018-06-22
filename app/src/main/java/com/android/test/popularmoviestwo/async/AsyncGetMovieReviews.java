@@ -20,14 +20,13 @@ import java.net.URL;
 
 public class AsyncGetMovieReviews extends AsyncTask<ArgsAsyncTrailers, Void, PojoReviews> {
 
-	private final int mTimeout = 15000;
+	private static final String TAG = AsyncGetMovieReviews.class.getSimpleName();
+	private static final int mTimeout = 15000;
+	private IAsyncReviews mListener;
 
 	public interface IAsyncReviews{
 		void onReviewsReceived(PojoReviews reviews);
 	}
-
-	private IAsyncReviews mListener;
-	private String CLASS_TAG = "AsyncGetMovieReviews";
 
 	public AsyncGetMovieReviews(Activity activity){
 		mListener = (IAsyncReviews) activity;
@@ -47,7 +46,7 @@ public class AsyncGetMovieReviews extends AsyncTask<ArgsAsyncTrailers, Void, Poj
 
 		try {
 			URL url = api.getReviewsUrl(movieId);
-			Log.d(CLASS_TAG, "myUrl:" + url.toString());
+			Log.d(TAG, "myUrl:" + url.toString());
 
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(mTimeout);
@@ -56,19 +55,14 @@ public class AsyncGetMovieReviews extends AsyncTask<ArgsAsyncTrailers, Void, Poj
 			conn.setDoInput(true);
 			conn.connect();
 			int response = conn.getResponseCode();
-			Log.d(CLASS_TAG, "The response is: " + response);
+			Log.d(TAG, "The response is: " + response);
 			is = conn.getInputStream();
 
 			// Convert the InputStream into a string
 			String contentAsString = readIt(is);
 
 			Gson gson = new Gson();
-			PojoReviews reviews = gson.fromJson(contentAsString, PojoReviews.class);
-
-			return reviews;
-
-			// Makes sure that the InputStream is closed after the app is
-			// finished using it.
+			return gson.fromJson(contentAsString, PojoReviews.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

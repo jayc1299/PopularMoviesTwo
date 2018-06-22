@@ -2,6 +2,7 @@ package com.android.test.popularmoviestwo.adapters;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import java.util.List;
 
 public class AdapterDetails extends ArrayAdapter<Detail>{
 
+	private static final String TAG = AdapterDetails.class.getSimpleName();
+	
 	LayoutInflater mInflater;
 	Context mContext;
 	MovieApi mApi;
@@ -26,6 +29,7 @@ public class AdapterDetails extends ArrayAdapter<Detail>{
 		mInflater = LayoutInflater.from(context);
 		mContext = context;
 		mApi = new MovieApi(mContext);
+		Log.d(TAG, "AdapterDetails: " + detailObjects.size());
 	}
 
 	@Override

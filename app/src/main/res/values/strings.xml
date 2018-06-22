@@ -33,7 +33,7 @@
 
 	<string name="preferences_key_popularity">popularity.desc</string>
 	<string name="preferences_key_top_rated">vote_average.desc</string>
-	<string name="trailerpath">a%s</string>
-	<string name="reviewspath">b%s</string>
+	<item name="trailerpath" type="string">%s/videos</item>
+	<item name="reviewspath" type="string">%s/reviews</item>
 
 </resources>
