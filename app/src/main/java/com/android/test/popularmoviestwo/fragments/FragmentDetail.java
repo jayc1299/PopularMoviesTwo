@@ -4,12 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,16 +19,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.test.popularmoviestwo.MovieApi;
 import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.activities.ActivityDetail;
-import com.android.test.popularmoviestwo.activities.ActivityReview;
 import com.android.test.popularmoviestwo.adapters.AdapterDetails;
 import com.android.test.popularmoviestwo.async.AsyncGetMovieReviews;
 import com.android.test.popularmoviestwo.async.AsyncGetMovieTrailers;
@@ -55,7 +53,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	private IFragmentDetailCallback mCallback;
 	private ImageView mImage;
 	private LinearLayout mFavourites;
-	private ListView mListview;
+	private RecyclerView mListview;
 	private AdapterDetails mAdapter;
 	private View mDetailView;
 	private ShareActionProvider mShareActionProvider;
@@ -77,7 +75,8 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		mDetailView = inflater.inflate(R.layout.fragment_detail_header, null, false);
 
 		mFavourites = (LinearLayout) mDetailView.findViewById(R.id.fragment_detail_favourites);
-		mListview = (ListView) view.findViewById(R.id.fragment_detail_trailers);
+		mListview = view.findViewById(R.id.fragment_detail_trailers);
+		mListview.setLayoutManager(new LinearLayoutManager(getActivity()));
 		setHasOptionsMenu(true);
 
 		return view;
@@ -155,6 +154,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 			}
 		});
 
+		/*
 		mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -178,6 +178,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 				}
 			}
 		});
+		*/
 
 		if(mMovie != null) {
 			setupMovieDetails();
@@ -293,10 +294,6 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 				Review review;
 				for (int i = 0; i < mReviews.size(); i++) {
 					review = mReviews.get(i);
-					if (i >= getResources().getInteger(R.integer.max_reviews)) {
-						//Too many reviews, screen would be squashed.
-						break;
-					}
 					detail = new Detail();
 					detail.setTitle(review.getContent());
 					detail.setAuthor(review.getAuthor());
@@ -305,9 +302,9 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 				}
 			}
 
-			mAdapter = new AdapterDetails(getActivity(), R.layout.item_detail, details);
+			mAdapter = new AdapterDetails(details);
 			mListview.setAdapter(mAdapter);
-			mListview.addHeaderView(mDetailView, null, false);
+			//mListview.addHeaderView(mDetailView, null, false);
 			mRunCount = 0;
 		}
 	}
