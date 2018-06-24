@@ -19,14 +19,14 @@ import java.net.URL;
 
 public class AsyncGetMoviePosters extends AsyncTask<Context, Void, PojoMovies> {
 
+	private static final String TAG = "AsyncGetMoviePosters";
 	private final int mTimeout = 15000;
+	private IAsyncMovies mListener;
 
 	public interface IAsyncMovies{
 		void onMoviesReceived(PojoMovies movies);
 	}
 
-	private IAsyncMovies mListener;
-	private String CLASS_TAG = "AsyncGetMoviePosters";
 
 	public AsyncGetMoviePosters(Activity activity){
 		mListener = (IAsyncMovies) activity;
@@ -44,7 +44,7 @@ public class AsyncGetMoviePosters extends AsyncTask<Context, Void, PojoMovies> {
 
 		try {
 			URL url = api.getMoviesUrl();
-			Log.d(CLASS_TAG, "myUrl:" + url.toString());
+			Log.d(TAG, "myUrl:" + url.toString());
 
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(mTimeout);
@@ -53,11 +53,13 @@ public class AsyncGetMoviePosters extends AsyncTask<Context, Void, PojoMovies> {
 			conn.setDoInput(true);
 			conn.connect();
 			int response = conn.getResponseCode();
-			Log.d(CLASS_TAG, "The response is: " + response);
+			Log.d(TAG, "The response is: " + response);
 			is = conn.getInputStream();
 
 			// Convert the InputStream into a string
 			String contentAsString = readIt(is);
+
+			Log.d(TAG, "contentAsString: " + contentAsString);
 
 			Gson gson = new Gson();
 			PojoMovies movies = gson.fromJson(contentAsString, PojoMovies.class);

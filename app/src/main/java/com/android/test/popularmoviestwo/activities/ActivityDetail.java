@@ -31,10 +31,10 @@ public class ActivityDetail extends AppCompatActivity {
         Movie mMovie = getIntent().getParcelableExtra(ActivityDetail.TAG_MOVIE_OBJECT);
 
         Toolbar actionBar = findViewById(R.id.toolbar);
-        actionBar.setTitle(mMovie.title);
+        actionBar.setTitle(mMovie.getTitle());
 
         ImageView mImage = (ImageView) findViewById(R.id.image);
-        String path = api.getImgUrl(mMovie.posterPath, true);
+        String path = api.getImgUrl(mMovie.getPosterPath(), true);
         Picasso.with(this).load(path).into(mImage);
 
         if (savedInstanceState == null) {

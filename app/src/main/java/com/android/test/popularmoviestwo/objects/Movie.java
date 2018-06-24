@@ -3,56 +3,57 @@ package com.android.test.popularmoviestwo.objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.android.test.popularmoviestwo.adapters.AdapterDetails;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Movie implements Parcelable {
+public class Movie extends DetailDisplay implements Parcelable {
 
 	@SerializedName("adult")
 	@Expose
-	public boolean adult;
+	private boolean adult;
 	@SerializedName("backdrop_path")
 	@Expose
-	public String backdropPath;
+	private String backdropPath;
 	@SerializedName("genre_ids")
 	@Expose
-	public List<Integer> genreIds = new ArrayList<Integer>();
+	private List<Integer> genreIds = new ArrayList<Integer>();
 	@SerializedName("id")
 	@Expose
-	public int id;
+	private int id;
 	@SerializedName("original_language")
 	@Expose
-	public String originalLanguage;
+	private String originalLanguage;
 	@SerializedName("original_title")
 	@Expose
-	public String originalTitle;
+	private String originalTitle;
 	@SerializedName("overview")
 	@Expose
-	public String overview;
+	private String overview;
 	@SerializedName("release_date")
 	@Expose
-	public String releaseDate;
+	private String releaseDate;
 	@SerializedName("poster_path")
 	@Expose
-	public String posterPath;
+	private String posterPath;
 	@SerializedName("popularity")
 	@Expose
-	public float popularity;
+	private float popularity;
 	@SerializedName("title")
 	@Expose
-	public String title;
+	private String title;
 	@SerializedName("video")
 	@Expose
-	public boolean video;
+	private boolean video;
 	@SerializedName("vote_average")
 	@Expose
-	public float voteAverage;
+	private float voteAverage;
 	@SerializedName("vote_count")
 	@Expose
-	public int voteCount;
+	private int voteCount;
 
 	public Movie(){}
 
@@ -63,6 +64,122 @@ public class Movie implements Parcelable {
 		this.voteAverage = voteAverage;
 		this.overview = overview;
 		this.posterPath = posterPath;
+	}
+
+	public boolean isAdult() {
+		return adult;
+	}
+
+	public void setAdult(boolean adult) {
+		this.adult = adult;
+	}
+
+	public String getBackdropPath() {
+		return backdropPath;
+	}
+
+	public void setBackdropPath(String backdropPath) {
+		this.backdropPath = backdropPath;
+	}
+
+	public List<Integer> getGenreIds() {
+		return genreIds;
+	}
+
+	public void setGenreIds(List<Integer> genreIds) {
+		this.genreIds = genreIds;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getOriginalLanguage() {
+		return originalLanguage;
+	}
+
+	public void setOriginalLanguage(String originalLanguage) {
+		this.originalLanguage = originalLanguage;
+	}
+
+	public String getOriginalTitle() {
+		return originalTitle;
+	}
+
+	public void setOriginalTitle(String originalTitle) {
+		this.originalTitle = originalTitle;
+	}
+
+	public String getOverview() {
+		return overview;
+	}
+
+	public void setOverview(String overview) {
+		this.overview = overview;
+	}
+
+	public String getReleaseDate() {
+		return releaseDate;
+	}
+
+	public void setReleaseDate(String releaseDate) {
+		this.releaseDate = releaseDate;
+	}
+
+	public String getPosterPath() {
+		return posterPath;
+	}
+
+	public void setPosterPath(String posterPath) {
+		this.posterPath = posterPath;
+	}
+
+	public float getPopularity() {
+		return popularity;
+	}
+
+	public void setPopularity(float popularity) {
+		this.popularity = popularity;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public boolean isVideo() {
+		return video;
+	}
+
+	public void setVideo(boolean video) {
+		this.video = video;
+	}
+
+	public float getVoteAverage() {
+		return voteAverage;
+	}
+
+	public void setVoteAverage(float voteAverage) {
+		this.voteAverage = voteAverage;
+	}
+
+	public int getVoteCount() {
+		return voteCount;
+	}
+
+	public void setVoteCount(int voteCount) {
+		this.voteCount = voteCount;
+	}
+
+	public static Creator<Movie> getCREATOR() {
+		return CREATOR;
 	}
 
 	protected Movie(Parcel in) {
@@ -127,4 +244,9 @@ public class Movie implements Parcelable {
 			return new Movie[size];
 		}
 	};
+
+	@Override
+	public int getDisplayType() {
+		return AdapterDetails.DISPLAY_TYPE_DETAIL;
+	}
 }

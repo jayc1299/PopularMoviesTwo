@@ -46,7 +46,7 @@ public class AdapterMovies extends ArrayAdapter<Movie>{
 		}
 
 		if(!mHasInternet) {
-			viewHolder.altText.setText(getItem(position).title);
+			viewHolder.altText.setText(getItem(position).getTitle());
 			viewHolder.altText.setVisibility(View.VISIBLE);
 			viewHolder.thumbImage.setVisibility(View.GONE);
 		}else{
@@ -55,7 +55,7 @@ public class AdapterMovies extends ArrayAdapter<Movie>{
 		}
 
 		//Get image path and use picasso to load it.
-		String path = mApi.getImgUrl(getItem(position).posterPath, false);
+		String path = mApi.getImgUrl(getItem(position).getPosterPath(), false);
 		Picasso.with(mContext).load(path).into(viewHolder.thumbImage);
 
 		convertView.setTag(viewHolder);

@@ -5,13 +5,6 @@
 	android:layout_height="wrap_content"
 	android:padding="10dp">
 
-	<ImageView
-		android:id="@+id/item_detail_img"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
-		android:src="@android:drawable/ic_media_play" />
-
 	<TextView
 		android:id="@+id/item_detail_text"
 		style="@style/defaultText"

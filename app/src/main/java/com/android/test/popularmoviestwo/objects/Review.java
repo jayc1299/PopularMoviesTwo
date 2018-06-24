@@ -1,22 +1,23 @@
 package com.android.test.popularmoviestwo.objects;
 
+import com.android.test.popularmoviestwo.adapters.AdapterDetails;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Review {
+public class Review extends DetailDisplay{
 
 	@SerializedName("id")
 	@Expose
-	String id;
+	private String id;
 	@SerializedName("author")
 	@Expose
-	String author;
+	private String author;
 	@SerializedName("content")
 	@Expose
-	String content;
+	private String content;
 	@SerializedName("url")
 	@Expose
-	String url;
+	private String url;
 
 	public String getId() {
 		return id;
@@ -48,5 +49,10 @@ public class Review {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	@Override
+	public int getDisplayType() {
+		return AdapterDetails.DISPLAY_TYPE_REVIEW;
 	}
 }

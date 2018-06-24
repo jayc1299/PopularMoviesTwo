@@ -82,6 +82,12 @@ public class AsyncGetMovieReviews extends AsyncTask<ArgsAsyncTrailers, Void, Poj
 	protected void onPostExecute(PojoReviews reviews) {
 		super.onPostExecute(reviews);
 
+		if(reviews != null && reviews.getResults() != null) {
+			Log.d(TAG, "reviews: " + reviews.getResults().size());
+		}else{
+			Log.d(TAG, "onPostExecute: 0");
+		}
+
 		if(mListener != null){
 			mListener.onReviewsReceived(reviews);
 		}

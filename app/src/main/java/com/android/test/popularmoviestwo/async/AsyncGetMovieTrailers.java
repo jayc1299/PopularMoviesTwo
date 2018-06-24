@@ -66,8 +66,6 @@ public class AsyncGetMovieTrailers extends AsyncTask<ArgsAsyncTrailers, Void, Po
 			Gson gson = new Gson();
 			PojoTrailers trailers = gson.fromJson(contentAsString, PojoTrailers.class);
 
-			Log.d(CLASS_TAG, "Trailer: " + trailers.getResults().size());
-
 			return trailers;
 
 			// Makes sure that the InputStream is closed after the app is
@@ -88,11 +86,17 @@ public class AsyncGetMovieTrailers extends AsyncTask<ArgsAsyncTrailers, Void, Po
 	}
 
 	@Override
-	protected void onPostExecute(PojoTrailers movies) {
-		super.onPostExecute(movies);
+	protected void onPostExecute(PojoTrailers trailers) {
+		super.onPostExecute(trailers);
+
+		if(trailers != null && trailers.getResults() != null) {
+			Log.d(CLASS_TAG, "Trailers: " + trailers.getResults().size());
+		}else{
+			Log.d(CLASS_TAG, "onPostExecute: 0");
+		}
 
 		if(mListener != null){
-			mListener.onTrailersReceived(movies);
+			mListener.onTrailersReceived(trailers);
 		}
 	}
 

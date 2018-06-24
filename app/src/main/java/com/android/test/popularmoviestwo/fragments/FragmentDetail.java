@@ -33,13 +33,12 @@ import com.android.test.popularmoviestwo.database.MoviesContract;
 import com.android.test.popularmoviestwo.database.TableHelperFavourites;
 import com.android.test.popularmoviestwo.objects.ArgsAsyncTrailers;
 import com.android.test.popularmoviestwo.objects.Detail;
+import com.android.test.popularmoviestwo.objects.DetailDisplay;
 import com.android.test.popularmoviestwo.objects.Movie;
 import com.android.test.popularmoviestwo.objects.PojoReviews;
 import com.android.test.popularmoviestwo.objects.PojoTrailers;
 import com.android.test.popularmoviestwo.objects.Review;
 import com.android.test.popularmoviestwo.objects.Trailer;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	private IFragmentDetailCallback mCallback;
 	private ImageView mImage;
 	private LinearLayout mFavourites;
-	private RecyclerView mListview;
+	private RecyclerView mRecyclerview;
 	private AdapterDetails mAdapter;
 	private View mDetailView;
 	private ShareActionProvider mShareActionProvider;
@@ -72,11 +71,8 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-		mDetailView = inflater.inflate(R.layout.fragment_detail_header, null, false);
-
-		mFavourites = (LinearLayout) mDetailView.findViewById(R.id.fragment_detail_favourites);
-		mListview = view.findViewById(R.id.fragment_detail_trailers);
-		mListview.setLayoutManager(new LinearLayoutManager(getActivity()));
+		mRecyclerview = view.findViewById(R.id.fragment_detail_trailers);
+		mRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
 		setHasOptionsMenu(true);
 
 		return view;
@@ -116,7 +112,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		//Get trailers
 		ArgsAsyncTrailers args = new ArgsAsyncTrailers();
 		args.setContext(getActivity());
-		args.setMovieId(mMovie.id);
+		args.setMovieId(mMovie.getId());
 		AsyncGetMovieTrailers asyncT = new AsyncGetMovieTrailers(FragmentDetail.this);
 		asyncT.execute(args);
 
@@ -124,6 +120,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		AsyncGetMovieReviews asyncR = new AsyncGetMovieReviews(FragmentDetail.this);
 		asyncR.execute(args);
 
+		/*
 		//Toggle making movie a favourite
 		mFavourites.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -153,9 +150,10 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 				}
 			}
 		});
+		*/
 
 		/*
-		mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		mRecyclerview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if(position > 0) {
@@ -182,8 +180,6 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 
 		if(mMovie != null) {
 			setupMovieDetails();
-			//Set opening state for if movie is a favourite or not
-			mFavourites.setSelected(isFavourite());
 		}
 	}
 
@@ -192,7 +188,7 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	 * @return boolean true if it is
 	 */
 	private boolean isFavourite(){
-		String[] args = {String.valueOf(mMovie.id)};
+		String[] args = {String.valueOf(mMovie.getId())};
 		String selection = TableHelperFavourites.COL_MOVIE_ID + " = ?";
 		Cursor cursor = getActivity().getContentResolver().query(MoviesContract.URI_FAVOURITES_GET_ALL, new String[]{TableHelperFavourites.COL_MOVIE_ID}, selection, args, null);
 
@@ -208,47 +204,17 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	private void setupMovieDetails(){
 		//Title
 		ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-		actionBar.setTitle(mMovie.title);
-
-		//Text
-		((TextView) mDetailView.findViewById(R.id.fragment_detail_title)).setText(mMovie.title);
-		((TextView) mDetailView.findViewById(R.id.fragment_detail_release_date)).setText(mMovie.releaseDate);
-		((TextView) mDetailView.findViewById(R.id.fragment_detail_vote_average)).setText(getString(R.string.fragment_detail_rating_text, String.valueOf(mMovie.voteAverage)));
-		((TextView) mDetailView.findViewById(R.id.fragment_detail_synopsis)).setText(String.valueOf(mMovie.overview));
-
-		//Set image
-		mImage = (ImageView) mDetailView.findViewById(R.id.fragment_detail_image);
-		String path = mAPi.getImgUrl(mMovie.posterPath, true);
-
-		//Callback to activity to give go ahead to load.
-		Picasso.with(getActivity()).load(path).into(mImage, new Callback() {
-			@Override
-			public void onSuccess() {
-				if (mCallback != null) {
-					mCallback.onMoviePosterLoaded(mImage);
-				}
-			}
-
-			@Override
-			public void onError() {
-				if (mCallback != null) {
-					mCallback.onMoviePosterLoaded(mImage);
-				}
-			}
-		});
+		actionBar.setTitle(mMovie.getTitle());
 	}
 
 	@Override
 	public void onTrailersReceived(PojoTrailers trailers) {
 		if(trailers != null && trailers.getResults() != null && trailers.getResults().size() > 0) {
 			Log.d("FragmentDetail", "trailers:" + trailers.getResults().size());
-			//Update share
-			mFirstTrailer = trailers.getResults().get(0).getKey();
-			if (mShareActionProvider != null) {
-				mShareActionProvider.setShareIntent(getShareTrailerIntent());
-			}
 			//Set trailers
 			mTrailers = trailers.getResults();
+		}else{
+			mTrailers = new ArrayList<>();
 		}
 		onReceiveAsyncResults();
 	}
@@ -258,6 +224,8 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 		if(reviews != null && reviews.getResults() != null && reviews.getResults().size() > 0) {
 			Log.d("FragmentDetail", "reviews:" + reviews.getResults().size());
 			mReviews = reviews.getResults();
+		}else {
+			mReviews = new ArrayList<>();
 		}
 		onReceiveAsyncResults();
 	}
@@ -269,42 +237,17 @@ public class FragmentDetail extends Fragment implements AsyncGetMovieTrailers.IA
 	 */
 	private void onReceiveAsyncResults(){
 		mRunCount++;
-		ArrayList<Detail> details = new ArrayList<>();
 		Log.d(TAG, "onReceiveAsyncResults: " + mRunCount);
 		if(mRunCount == 2){
-			Detail detail;
-			//Trailers must come first
-			if(mTrailers != null && mTrailers.size() > 0) {
-				for (Trailer trailer : mTrailers) {
-					detail = new Detail();
-					detail.setTitle(trailer.getName());
-					detail.setUrl(trailer.getKey());
-					detail.setDrawable(android.R.drawable.ic_media_play);
-					details.add(detail);
-				}
-			}
+			ArrayList<DetailDisplay> details = new ArrayList<>();
 
-			if(mReviews != null && mReviews.size() > 0) {
-				//Insert a heading between two groups
-				detail = new Detail();
-				detail.setIsReviewHeading(true);
-				details.add(detail);
-
-				//Then reviews
-				Review review;
-				for (int i = 0; i < mReviews.size(); i++) {
-					review = mReviews.get(i);
-					detail = new Detail();
-					detail.setTitle(review.getContent());
-					detail.setAuthor(review.getAuthor());
-					detail.setDrawable(android.R.drawable.ic_menu_edit);
-					details.add(detail);
-				}
-			}
+			details.add(mMovie);
+			details.addAll(mTrailers);
+			details.addAll(mReviews);
 
 			mAdapter = new AdapterDetails(details);
-			mListview.setAdapter(mAdapter);
-			//mListview.addHeaderView(mDetailView, null, false);
+			mRecyclerview.setAdapter(mAdapter);
+			//mRecyclerview.addHeaderView(mDetailView, null, false);
 			mRunCount = 0;
 		}
 	}
