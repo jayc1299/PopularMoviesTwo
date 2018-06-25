@@ -1,11 +1,8 @@
 package com.android.test.popularmoviestwo.fragments;
 
-import android.app.ActivityOptions;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -22,10 +19,8 @@ import android.widget.GridView;
 import android.widget.ListView;
 
 import com.android.test.popularmoviestwo.R;
-import com.android.test.popularmoviestwo.activities.ActivityDetail;
-import com.android.test.popularmoviestwo.activities.ActivityMain;
 import com.android.test.popularmoviestwo.adapters.AdapterMovies;
-import com.android.test.popularmoviestwo.async.AsyncGetMoviePosters;
+import com.android.test.popularmoviestwo.async.AsyncGetMovies;
 import com.android.test.popularmoviestwo.database.MoviesContract;
 import com.android.test.popularmoviestwo.database.TableHelperFavourites;
 import com.android.test.popularmoviestwo.objects.Movie;
@@ -34,7 +29,7 @@ import com.android.test.popularmoviestwo.objects.PojoMovies;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyncMovies, LoaderManager.LoaderCallbacks<Cursor>{
+public class FragmentMain extends Fragment implements AsyncGetMovies.IAsyncMovies, LoaderManager.LoaderCallbacks<Cursor>{
 
 	public static String TAG_TABLET_MODE = "tag_tablet_mode";
 
@@ -87,33 +82,12 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 			mPosition = savedInstanceState.getInt(SELECTED_KEY);
 		}
 
-
 		mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				mPosition = position;
 				if (mAdapter != null && mAdapter.getCount() > 0) {
-					if (mTabletMode) {
-						//In tablet mode send message back to activity, so it can load the details in a pane.
-						mCallback.onMovieClicked(mAdapter.getItem(position));
-					} else {
-						//Not in tablet mode, open a new activity
-						Intent intent = new Intent(getActivity(), ActivityDetail.class);
-						intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, mAdapter.getItem(position));
-						intent.putExtra(ActivityDetail.TAG_IS_ON_FAVOURITES, isShowFavourites());
-
-						ActivityOptions options = null;
-						// create the transition animation - the images in the layouts of both activities are defined with android:transitionName="movieTransition"
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-							options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), view, getString(R.string.movieTransitionName));
-						}
-						// start the new activity
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && options != null) {
-							getActivity().startActivityForResult(intent, ActivityMain.REQUEST_CODE_DETAIL, options.toBundle());
-						} else {
-							getActivity().startActivityForResult(intent, ActivityMain.REQUEST_CODE_DETAIL);
-						}
-					}
+					mCallback.onMovieClicked(mAdapter.getItem(position));
 				}
 			}
 		});
@@ -151,7 +125,7 @@ public class FragmentMain extends Fragment implements AsyncGetMoviePosters.IAsyn
 	 * Get movies from web.
 	 */
 	private void getMovies(){
-		AsyncGetMoviePosters async = new AsyncGetMoviePosters(this);
+		AsyncGetMovies async = new AsyncGetMovies(this);
 		async.execute(getActivity());
 	}
 

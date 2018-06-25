@@ -1,9 +1,7 @@
 package com.android.test.popularmoviestwo.async;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.android.test.popularmoviestwo.MovieApi;
@@ -17,23 +15,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class AsyncGetMoviePosters extends AsyncTask<Context, Void, PojoMovies> {
+public class AsyncGetMovies extends AsyncTask<Context, Void, PojoMovies> {
 
-	private static final String TAG = "AsyncGetMoviePosters";
-	private final int mTimeout = 15000;
+	private static final String TAG = "AsyncGetMovies";
+	private static final int mTimeout = 15000;
 	private IAsyncMovies mListener;
 
 	public interface IAsyncMovies{
 		void onMoviesReceived(PojoMovies movies);
 	}
 
-
-	public AsyncGetMoviePosters(Activity activity){
-		mListener = (IAsyncMovies) activity;
-	}
-
-	public AsyncGetMoviePosters(Fragment fragment){
-		mListener = (IAsyncMovies) fragment;
+	public AsyncGetMovies(IAsyncMovies listener){
+		mListener = listener;
 	}
 
 	@Override
@@ -62,9 +55,8 @@ public class AsyncGetMoviePosters extends AsyncTask<Context, Void, PojoMovies> {
 			Log.d(TAG, "contentAsString: " + contentAsString);
 
 			Gson gson = new Gson();
-			PojoMovies movies = gson.fromJson(contentAsString, PojoMovies.class);
 
-			return movies;
+			return gson.fromJson(contentAsString, PojoMovies.class);
 
 			// Makes sure that the InputStream is closed after the app is
 			// finished using it.
@@ -92,7 +84,7 @@ public class AsyncGetMoviePosters extends AsyncTask<Context, Void, PojoMovies> {
 		}
 	}
 
-	public String readIt(InputStream stream) throws IOException{
+	private String readIt(InputStream stream) throws IOException{
 		BufferedReader r = new BufferedReader(new InputStreamReader(stream));
 		StringBuilder total = new StringBuilder();
 		String line;

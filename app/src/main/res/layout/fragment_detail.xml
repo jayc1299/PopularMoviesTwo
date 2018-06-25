@@ -1,6 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/fragment_detail_trailers"
-	android:layout_height="match_parent"
-	android:layout_width="match_parent" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:weightSum="3">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/movieDetailSubHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/fragment_detail_rating" />
+
+            <TextView
+                android:id="@+id/detail_reviews"
+                style="@style/defaultText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="6/10" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/movieDetailSubHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/fragment_detail_release_date" />
+
+            <TextView
+                android:id="@+id/detail_release_date"
+                style="@style/defaultText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="12-06-2018" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/movieDetailSubHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/fragment_detail_vote_count" />
+
+            <TextView
+                android:id="@+id/detail_length"
+                style="@style/defaultText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="123, 456" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/detail_synopsis"
+        style="@style/defaultText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tincidunt eget nisl non placerat. Aliquam diam nibh, consectetur et scelerisque nec, volutpat gravida justo. Nulla facilisi. In id purus nunc. Suspendisse sollicitudin nunc vitae sapien porta elementum. Aliquam hendrerit risus vitae lorem sollicitudin eleifend." />
+</LinearLayout>

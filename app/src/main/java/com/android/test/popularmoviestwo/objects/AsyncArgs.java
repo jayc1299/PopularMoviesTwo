@@ -2,10 +2,10 @@ package com.android.test.popularmoviestwo.objects;
 
 import android.content.Context;
 
-public class ArgsAsyncTrailers {
+public class AsyncArgs {
 
-	Context context;
-	int movieId;
+	private Context context;
+	private int movieId;
 
 	public Context getContext() {
 		return context;

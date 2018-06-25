@@ -3,15 +3,13 @@
 	android:orientation="horizontal"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:layout_marginTop="5dp"
 	android:padding="10dp">
 
 	<TextView
-		android:id="@+id/item_detail_text"
-		style="@style/defaultText"
+		android:id="@+id/item_header_text"
+		style="@style/movieDetailSubHeader"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
-		android:ellipsize="end"
-		android:maxLines="2"
-		android:layout_marginLeft="5dp" />
+		android:layout_gravity="center_vertical" />
 </LinearLayout>

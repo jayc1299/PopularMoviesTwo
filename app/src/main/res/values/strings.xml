@@ -24,6 +24,7 @@
 	<string name="fragment_detail_trailers">Trailers</string>
 	<string name="fragment_detail_reviews">Reviews</string>
 	<string name="fragment_detail_share">I\'m watching this trailer</string>
+	<string name="fragment_detail_vote_count">Vote Count</string>
 
 	<string name="fragment_reviews_title">Review of %s</string>
 	<string name="fragment_reviews_author">Author</string>
@@ -33,6 +34,7 @@
 
 	<string name="preferences_key_popularity">popularity.desc</string>
 	<string name="preferences_key_top_rated">vote_average.desc</string>
+
 	<item name="trailerpath" type="string">%s/videos</item>
 	<item name="reviewspath" type="string">%s/reviews</item>
 

@@ -3,14 +3,13 @@ package com.android.test.popularmoviestwo.objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.android.test.popularmoviestwo.adapters.AdapterDetails;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Movie extends DetailDisplay implements Parcelable {
+public class Movie implements Parcelable {
 
 	@SerializedName("adult")
 	@Expose
@@ -244,9 +243,4 @@ public class Movie extends DetailDisplay implements Parcelable {
 			return new Movie[size];
 		}
 	};
-
-	@Override
-	public int getDisplayType() {
-		return AdapterDetails.DISPLAY_TYPE_DETAIL;
-	}
 }

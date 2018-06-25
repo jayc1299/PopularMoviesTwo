@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.test.popularmoviestwo.R;
-import com.android.test.popularmoviestwo.objects.Detail;
 import com.android.test.popularmoviestwo.objects.DetailDisplay;
+import com.android.test.popularmoviestwo.objects.HeaderObject;
 import com.android.test.popularmoviestwo.objects.Movie;
 import com.android.test.popularmoviestwo.objects.Review;
 import com.android.test.popularmoviestwo.objects.Trailer;
@@ -18,22 +18,28 @@ import java.util.ArrayList;
 
 public class AdapterDetails extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-	public static final int DISPLAY_TYPE_DETAIL = 1;
+	public interface IAdapterDetailItemClicked{
+		void onTrailerClicked(String key);
+	}
+
+	public static final int DISPLAY_TYPE_HEADER = 1;
 	public static final int DISPLAY_TYPE_REVIEW = 2;
 	public static final int DISPLAY_TYPE_TRAILER = 3;
 
 	private ArrayList<DetailDisplay> items;
+	private IAdapterDetailItemClicked listener;
 
-	public AdapterDetails(ArrayList<DetailDisplay> items) {
+	public AdapterDetails(ArrayList<DetailDisplay> items, IAdapterDetailItemClicked listener) {
 		this.items = items;
+		this.listener = listener;
 	}
 
 	@NonNull
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		switch (viewType){
-			case DISPLAY_TYPE_DETAIL:
-				return new DetailViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_detail, parent, false));
+			case DISPLAY_TYPE_HEADER:
+				return new HeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_header, parent, false));
 			case DISPLAY_TYPE_REVIEW:
 				return new ReviewViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_review, parent, false));
 			case DISPLAY_TYPE_TRAILER:
@@ -45,15 +51,27 @@ public class AdapterDetails extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 	@Override
 	public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-		if(holder instanceof DetailViewHolder){
-			Movie movie = (Movie) items.get(position);
-			((DetailViewHolder) holder).mTextView.setText(movie.getTitle());
+		if(holder instanceof HeaderViewHolder){
+			HeaderObject headerObject = (HeaderObject) items.get(position);
+			((HeaderViewHolder) holder).mTextView.setText(headerObject.getHeader());
 		}else if(holder instanceof ReviewViewHolder){
 			Review review = (Review) items.get(position);
-			((ReviewViewHolder) holder).mTextView.setText(review.getContent().substring(0, 50));
+			if(review != null && review.getContent() != null && review.getContent().length() > 50) {
+				((ReviewViewHolder) holder).mTextView.setText(review.getContent().substring(0, 50));
+			}else{
+				((ReviewViewHolder) holder).mTextView.setText(review.getContent());
+			}
 		}else if(holder instanceof TrailerViewHolder){
-			Trailer trailer = (Trailer) items.get(position);
+			final Trailer trailer = (Trailer) items.get(position);
 			((TrailerViewHolder) holder).mTextView.setText(trailer.getName());
+			holder.itemView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					if(listener != null){
+						listener.onTrailerClicked(trailer.getKey());
+					}
+				}
+			});
 		}
 	}
 
@@ -67,13 +85,13 @@ public class AdapterDetails extends RecyclerView.Adapter<RecyclerView.ViewHolder
 		return items.size();
 	}
 
-	class DetailViewHolder extends RecyclerView.ViewHolder {
+	class HeaderViewHolder extends RecyclerView.ViewHolder {
 		// each data item is just a string in this case
 		TextView mTextView;
 
-		DetailViewHolder(View v) {
+		HeaderViewHolder(View v) {
 			super(v);
-			mTextView = v.findViewById(R.id.item_detail_text);
+			mTextView = v.findViewById(R.id.item_header_text);
 		}
 	}
 

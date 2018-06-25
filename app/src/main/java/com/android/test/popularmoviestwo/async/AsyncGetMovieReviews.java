@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.android.test.popularmoviestwo.MovieApi;
-import com.android.test.popularmoviestwo.objects.ArgsAsyncTrailers;
+import com.android.test.popularmoviestwo.objects.AsyncArgs;
 import com.android.test.popularmoviestwo.objects.PojoReviews;
 import com.google.gson.Gson;
 
@@ -18,7 +18,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class AsyncGetMovieReviews extends AsyncTask<ArgsAsyncTrailers, Void, PojoReviews> {
+public class AsyncGetMovieReviews extends AsyncTask<AsyncArgs, Void, PojoReviews> {
 
 	private static final String TAG = AsyncGetMovieReviews.class.getSimpleName();
 	private static final int mTimeout = 15000;
@@ -37,7 +37,7 @@ public class AsyncGetMovieReviews extends AsyncTask<ArgsAsyncTrailers, Void, Poj
 	}
 
 	@Override
-	protected PojoReviews doInBackground(ArgsAsyncTrailers... params) {
+	protected PojoReviews doInBackground(AsyncArgs... params) {
 		InputStream is = null;
 		Context context = params[0].getContext();
 		int movieId = params[0].getMovieId();
