@@ -14,15 +14,15 @@ import com.android.test.popularmoviestwo.activities.ActivityReview;
 
 public class FragmentReview extends Fragment{
 
-	TextView mAuthor;
-	TextView mReview;
+	private TextView mAuthor;
+	private TextView mReview;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_review, container, false);
 
-		mAuthor = (TextView) view.findViewById(R.id.fragment_review_author);
-		mReview = (TextView) view.findViewById(R.id.fragment_review_review);
+		mAuthor = view.findViewById(R.id.fragment_review_author);
+		mReview = view.findViewById(R.id.fragment_review_review);
 
 		return view;
 	}

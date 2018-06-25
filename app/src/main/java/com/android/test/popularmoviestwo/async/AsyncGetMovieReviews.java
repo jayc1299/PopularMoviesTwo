@@ -46,7 +46,6 @@ public class AsyncGetMovieReviews extends AsyncTask<AsyncArgs, Void, PojoReviews
 
 		try {
 			URL url = api.getReviewsUrl(movieId);
-			Log.d(TAG, "myUrl:" + url.toString());
 
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(mTimeout);
@@ -55,7 +54,6 @@ public class AsyncGetMovieReviews extends AsyncTask<AsyncArgs, Void, PojoReviews
 			conn.setDoInput(true);
 			conn.connect();
 			int response = conn.getResponseCode();
-			Log.d(TAG, "The response is: " + response);
 			is = conn.getInputStream();
 
 			// Convert the InputStream into a string
@@ -93,7 +91,7 @@ public class AsyncGetMovieReviews extends AsyncTask<AsyncArgs, Void, PojoReviews
 		}
 	}
 
-	public String readIt(InputStream stream) throws IOException{
+	private String readIt(InputStream stream) throws IOException{
 		BufferedReader r = new BufferedReader(new InputStreamReader(stream));
 		StringBuilder total = new StringBuilder();
 		String line;

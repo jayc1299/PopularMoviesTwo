@@ -20,6 +20,7 @@ public class AdapterDetails extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 	public interface IAdapterDetailItemClicked{
 		void onTrailerClicked(String key);
+		void onReviewClicked(Review review);
 	}
 
 	public static final int DISPLAY_TYPE_HEADER = 1;
@@ -55,12 +56,20 @@ public class AdapterDetails extends RecyclerView.Adapter<RecyclerView.ViewHolder
 			HeaderObject headerObject = (HeaderObject) items.get(position);
 			((HeaderViewHolder) holder).mTextView.setText(headerObject.getHeader());
 		}else if(holder instanceof ReviewViewHolder){
-			Review review = (Review) items.get(position);
+			final Review review = (Review) items.get(position);
 			if(review != null && review.getContent() != null && review.getContent().length() > 50) {
 				((ReviewViewHolder) holder).mTextView.setText(review.getContent().substring(0, 50));
 			}else{
 				((ReviewViewHolder) holder).mTextView.setText(review.getContent());
 			}
+			holder.itemView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if(listener != null){
+						listener.onReviewClicked(review);
+					}
+				}
+			});
 		}else if(holder instanceof TrailerViewHolder){
 			final Trailer trailer = (Trailer) items.get(position);
 			((TrailerViewHolder) holder).mTextView.setText(trailer.getName());

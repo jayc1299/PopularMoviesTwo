@@ -1,7 +1,7 @@
 package com.android.test.popularmoviestwo.fragments;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.activities.ActivityDetail;
+import com.android.test.popularmoviestwo.activities.ActivityReview;
 import com.android.test.popularmoviestwo.adapters.AdapterDetails;
 import com.android.test.popularmoviestwo.async.AsyncGetMovieReviews;
 import com.android.test.popularmoviestwo.async.AsyncGetMovieTrailers;
@@ -54,7 +55,6 @@ public class FragmentListContent extends Fragment implements AsyncGetMovieTraile
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
 
         //Get movie passed in from activity
         Intent intent = getActivity().getIntent();
@@ -128,15 +128,35 @@ public class FragmentListContent extends Fragment implements AsyncGetMovieTraile
     }
 
     private void showYouTubeTrailer(String key){
-        //TODO: Check for youTube installed?
-        Intent youtubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
-        startActivity(youtubeIntent);
+        PackageManager packageManager = getActivity().getPackageManager();
+        Intent youTubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.youtube_link) + key));
+        //Can we open a youtube intent
+        if(youTubeIntent.resolveActivity(packageManager) != null){
+            startActivity(youTubeIntent);
+        }else{
+            //no, open it in webview
+            startActivity(webIntent);
+        }
     }
+
+    private void openReviewDetail(String movieTitle, Review review){
+    	Intent reviewIntent = new Intent(getActivity(), ActivityReview.class);
+    	reviewIntent.putExtra(ActivityReview.TAG_TITLE, movieTitle);
+    	reviewIntent.putExtra(ActivityReview.TAG_AUTHOR, review.getAuthor());
+    	reviewIntent.putExtra(ActivityReview.TAG_REVIEW, review.getContent());
+    	startActivity(reviewIntent);
+	}
 
     private AdapterDetails.IAdapterDetailItemClicked listItemClickListener = new AdapterDetails.IAdapterDetailItemClicked() {
         @Override
         public void onTrailerClicked(String key) {
             showYouTubeTrailer(key);
         }
-    };
+
+		@Override
+		public void onReviewClicked(Review review) {
+			openReviewDetail(mMovie.getTitle(), review);
+		}
+	};
 }

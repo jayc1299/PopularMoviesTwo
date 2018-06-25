@@ -23,7 +23,7 @@
 	<string name="fragment_detail_rating_text">%s / 10</string>
 	<string name="fragment_detail_trailers">Trailers</string>
 	<string name="fragment_detail_reviews">Reviews</string>
-	<string name="fragment_detail_share">I\'m watching this trailer</string>
+	<string name="fragment_detail_share">I\'m loving this movie&#160;</string>
 	<string name="fragment_detail_vote_count">Vote Count</string>
 
 	<string name="fragment_reviews_title">Review of %s</string>

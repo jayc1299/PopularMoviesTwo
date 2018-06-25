@@ -1,9 +1,7 @@
 package com.android.test.popularmoviestwo.async;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.android.test.popularmoviestwo.MovieApi;
@@ -26,7 +24,7 @@ public class AsyncGetMovieTrailers extends AsyncTask<AsyncArgs, Void, PojoTraile
 	}
 
 	private static final int mTimeout = 15000;
-	private static final String TAG = "AsyncGetMovieTrailers";
+	private static final String TAG = AsyncGetMovieTrailers.class.getSimpleName();
 	private IAsyncTrailers mListener;
 
 	public AsyncGetMovieTrailers(IAsyncTrailers listener){
@@ -57,8 +55,6 @@ public class AsyncGetMovieTrailers extends AsyncTask<AsyncArgs, Void, PojoTraile
 			String contentAsString = readIt(is);
 
 			Gson gson = new Gson();
-
-			Log.d(TAG, "trailers:: " + contentAsString);
 
 			return gson.fromJson(contentAsString, PojoTrailers.class);
 

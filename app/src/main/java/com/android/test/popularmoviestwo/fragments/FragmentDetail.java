@@ -21,6 +21,7 @@ import com.android.test.popularmoviestwo.objects.Movie;
 public class FragmentDetail extends Fragment {
 
     private Movie mMovie;
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,7 +38,9 @@ public class FragmentDetail extends Fragment {
         MenuItem menuItem = menu.findItem(R.id.action_share);
 
         // Get the provider and hold onto it to set/change the share intent.
-        ShareActionProvider mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+		setShareIntent();
     }
 
     @Override
@@ -55,5 +58,19 @@ public class FragmentDetail extends Fragment {
         ((TextView) getView().findViewById(R.id.detail_release_date)).setText(mMovie.getReleaseDate());
         ((TextView) getView().findViewById(R.id.detail_length)).setText(String.valueOf(mMovie.getVoteCount()));
 
+		setShareIntent();
+	}
+
+    private void setShareIntent() {
+		Intent sendIntent = new Intent();
+		sendIntent.setAction(Intent.ACTION_SEND);
+		if(mMovie != null) {
+			sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.fragment_detail_share) + mMovie.getTitle());
+		}
+		sendIntent.setType("text/plain");
+
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(sendIntent);
+		}
     }
 }
