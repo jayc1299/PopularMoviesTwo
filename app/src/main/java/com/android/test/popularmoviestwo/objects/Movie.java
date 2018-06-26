@@ -1,5 +1,8 @@
 package com.android.test.popularmoviestwo.objects;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,6 +12,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Movie implements Parcelable {
 
 	@SerializedName("adult")
@@ -19,9 +23,11 @@ public class Movie implements Parcelable {
 	private String backdropPath;
 	@SerializedName("genre_ids")
 	@Expose
-	private List<Integer> genreIds = new ArrayList<Integer>();
+	@Ignore
+	private List<Integer> genreIds = new ArrayList<>();
 	@SerializedName("id")
 	@Expose
+	@PrimaryKey
 	private int id;
 	@SerializedName("original_language")
 	@Expose
@@ -55,15 +61,6 @@ public class Movie implements Parcelable {
 	private int voteCount;
 
 	public Movie(){}
-
-	public Movie(int id, String title, String releaseDate, float voteAverage, String overview, String posterPath){
-		this.id = id;
-		this.title = title;
-		this.releaseDate = releaseDate;
-		this.voteAverage = voteAverage;
-		this.overview = overview;
-		this.posterPath = posterPath;
-	}
 
 	public boolean isAdult() {
 		return adult;
@@ -181,6 +178,7 @@ public class Movie implements Parcelable {
 		return CREATOR;
 	}
 
+	@Ignore
 	protected Movie(Parcel in) {
 		adult = in.readByte() != 0x00;
 		backdropPath = in.readString();

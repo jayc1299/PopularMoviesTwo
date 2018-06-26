@@ -1,4 +1,4 @@
-package com.android.test.popularmoviestwo.database;
+package com.android.test.popularmoviestwo.database.old;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

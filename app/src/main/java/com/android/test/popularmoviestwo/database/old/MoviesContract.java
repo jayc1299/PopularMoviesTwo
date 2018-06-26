@@ -1,6 +1,5 @@
-package com.android.test.popularmoviestwo.database;
+package com.android.test.popularmoviestwo.database.old;
 
-import android.content.ContentUris;
 import android.net.Uri;
 
 public class MoviesContract {

@@ -1,4 +1,4 @@
-package com.android.test.popularmoviestwo.database;
+package com.android.test.popularmoviestwo.database.old;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 

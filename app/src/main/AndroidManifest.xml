@@ -45,9 +45,5 @@
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value=".activities.ActivityDetail" />
 		</activity>
-
-		<provider
-			android:authorities="@string/favourites_provider"
-			android:name=".database.FavouritesProvider" />
 	</application>
 </manifest>
