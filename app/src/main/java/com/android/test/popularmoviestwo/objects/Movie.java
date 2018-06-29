@@ -59,6 +59,8 @@ public class Movie implements Parcelable {
 	@SerializedName("vote_count")
 	@Expose
 	private int voteCount;
+	@SerializedName("isFavourite")
+	private boolean isFavourite;
 
 	public Movie(){}
 
@@ -174,6 +176,14 @@ public class Movie implements Parcelable {
 		this.voteCount = voteCount;
 	}
 
+	public boolean isFavourite() {
+		return isFavourite;
+	}
+
+	public void setFavourite(boolean favourite) {
+		isFavourite = favourite;
+	}
+
 	public static Creator<Movie> getCREATOR() {
 		return CREATOR;
 	}
@@ -199,6 +209,7 @@ public class Movie implements Parcelable {
 		video = in.readByte() != 0x00;
 		voteAverage = in.readFloat();
 		voteCount = in.readInt();
+		isFavourite = in.readByte() != 0x00;
 	}
 
 	@Override
@@ -227,6 +238,7 @@ public class Movie implements Parcelable {
 		dest.writeByte((byte) (video ? 0x01 : 0x00));
 		dest.writeFloat(voteAverage);
 		dest.writeInt(voteCount);
+		dest.writeByte((byte) (isFavourite ? 0x01 : 0x00));
 	}
 
 	@SuppressWarnings("unused")

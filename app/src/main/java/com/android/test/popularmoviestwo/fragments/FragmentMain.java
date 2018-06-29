@@ -2,6 +2,7 @@ package com.android.test.popularmoviestwo.fragments;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,13 +22,13 @@ import com.android.test.popularmoviestwo.R;
 import com.android.test.popularmoviestwo.adapters.AdapterMovies;
 import com.android.test.popularmoviestwo.async.AsyncGetMovies;
 import com.android.test.popularmoviestwo.database.AppDatabase;
+import com.android.test.popularmoviestwo.database.MoviesViewModel;
 import com.android.test.popularmoviestwo.objects.Movie;
-import com.android.test.popularmoviestwo.objects.PojoMovies;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentMain extends Fragment implements AsyncGetMovies.IAsyncMovies {
+public class FragmentMain extends Fragment {
 
     private static final String TAG = FragmentMain.class.getSimpleName();
     public static final String TAG_TABLET_MODE = "tag_tablet_mode";
@@ -39,18 +40,32 @@ public class FragmentMain extends Fragment implements AsyncGetMovies.IAsyncMovie
     private boolean mTabletMode = false;
     private IFragmentMainListener mCallback;
     private int mPosition = ListView.INVALID_POSITION;
+    private MoviesViewModel viewModel;
 
     public interface IFragmentMainListener {
         void onMovieClicked(Movie movie);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         mGridview = (GridView) view.findViewById(R.id.fragment_main_gridview);
         mGridview.setEmptyView(view.findViewById(R.id.fragment_main_no_results));
         return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        viewModel = ViewModelProviders.of(this).get(MoviesViewModel.class);
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                onMoviesReceived(movies);
+            }
+        });
     }
 
     @Override
@@ -66,8 +81,6 @@ public class FragmentMain extends Fragment implements AsyncGetMovies.IAsyncMovie
         //Set empty adapter, items added later
         mAdapter = new AdapterMovies(getActivity(), R.layout.item_movie, new ArrayList<Movie>());
         mGridview.setAdapter(mAdapter);
-
-        showTiles();
 
         if (mTabletMode) {
             mGridview.setNumColumns(1);
@@ -86,18 +99,6 @@ public class FragmentMain extends Fragment implements AsyncGetMovies.IAsyncMovie
                 if (mAdapter != null && mAdapter.getCount() > 0) {
                     mCallback.onMovieClicked(mAdapter.getItem(position));
                 }
-            }
-        });
-
-
-        AppDatabase mDb = AppDatabase.getInstance(getActivity());
-        LiveData<List<Movie>> movies = mDb.movieDao().getAllMovies();
-
-        movies.observe(this, new Observer<List<Movie>>() {
-            @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-                Log.d(TAG, "Movies recicved:" + movies.size());
-                onMoviesReceived(movies);
             }
         });
     }
@@ -119,25 +120,9 @@ public class FragmentMain extends Fragment implements AsyncGetMovies.IAsyncMovie
         super.onSaveInstanceState(outState);
     }
 
-    /**
-     * Called from activity as well, in response to settings or detail page closing and refresh required.
-     */
-    public void showTiles() {
-        getMovies();
-    }
-
-    /**
-     * Get movies from web.
-     */
-    private void getMovies() {
-        AsyncGetMovies async = new AsyncGetMovies(this);
-        async.execute(getActivity());
-    }
-
-    @Override
-    public void onMoviesReceived(List<Movie> movies) {
+    private void onMoviesReceived(List<Movie> movies) {
         if (movies != null) {
-            Log.d(FragmentMain.class.getSimpleName(), "movies:" + movies.size());
+            Log.d(TAG, "movies:" + movies.size());
             mAdapter.updateItems(movies);
             if (mPosition != ListView.INVALID_POSITION) {
                 // If we don't need to restart the loader, and there's a desired position to restore to, do so now.

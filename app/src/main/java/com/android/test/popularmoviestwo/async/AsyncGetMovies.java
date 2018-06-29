@@ -22,15 +22,6 @@ public class AsyncGetMovies extends AsyncTask<Context, Void, PojoMovies> {
 
     private static final String TAG = "AsyncGetMovies";
     private static final int mTimeout = 15000;
-    private IAsyncMovies mListener;
-
-    public interface IAsyncMovies {
-        void onMoviesReceived(List<Movie> movies);
-    }
-
-    public AsyncGetMovies(IAsyncMovies listener) {
-        mListener = listener;
-    }
 
     @Override
     protected PojoMovies doInBackground(Context... params) {
@@ -87,15 +78,6 @@ public class AsyncGetMovies extends AsyncTask<Context, Void, PojoMovies> {
         }
 
         return null;
-    }
-
-    @Override
-    protected void onPostExecute(PojoMovies movies) {
-        super.onPostExecute(movies);
-
-        if (mListener != null) {
-            //mListener.onMoviesReceived(movies.movies);
-        }
     }
 
     private String readIt(InputStream stream) throws IOException {

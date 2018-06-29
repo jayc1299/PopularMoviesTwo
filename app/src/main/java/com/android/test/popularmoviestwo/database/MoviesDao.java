@@ -19,6 +19,9 @@ public interface MoviesDao {
     @Query("select * from " + TABLE_NAME)
     LiveData<List<Movie>> getAllMovies();
 
+    @Query("select * from " + TABLE_NAME + " where isFavourite = 1")
+    LiveData<List<Movie>> getOnlyFavourites();
+
     @Insert
     void insertMovie(Movie movie);
 

@@ -6,17 +6,19 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.test.popularmoviestwo.R;
+import com.android.test.popularmoviestwo.async.AsyncGetMovies;
 import com.android.test.popularmoviestwo.fragments.FragmentDetail;
-import com.android.test.popularmoviestwo.fragments.FragmentListContent;
 import com.android.test.popularmoviestwo.fragments.FragmentMain;
 import com.android.test.popularmoviestwo.objects.Movie;
 
 public class ActivityMain extends AppCompatActivity implements FragmentMain.IFragmentMainListener {
 
+    private static final String TAG = ActivityMain.class.getSimpleName();
     public static final int REQUEST_CODE_SETTINGS = 1;
     public static final int REQUEST_CODE_DETAIL = 2;
 
@@ -44,6 +46,7 @@ public class ActivityMain extends AppCompatActivity implements FragmentMain.IFra
             frag.setArguments(args);
             ft.replace(R.id.activity_main_movies_container, frag, FragmentMain.class.getSimpleName());
             ft.commit();
+            refreshMovieList();
         }
     }
 
@@ -85,10 +88,8 @@ public class ActivityMain extends AppCompatActivity implements FragmentMain.IFra
      * Force fragmentMain to refresh movie list
      */
     private void refreshMovieList() {
-        FragmentMain fm = (FragmentMain) getSupportFragmentManager().findFragmentByTag(FragmentMain.class.getSimpleName());
-        if (fm != null) {
-            fm.showTiles();
-        }
+        Log.d(TAG, "refreshMovieList: ");
+        getMovies();
         updateActionBarTitle();
     }
 
@@ -126,5 +127,14 @@ public class ActivityMain extends AppCompatActivity implements FragmentMain.IFra
             intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, movie);
             startActivity(intent);
         }
+    }
+
+    /**
+     * Get movies from web.
+     */
+    private void getMovies() {
+        Log.d(TAG, "getMovies: ");
+        AsyncGetMovies async = new AsyncGetMovies();
+        async.execute(this);
     }
 }
