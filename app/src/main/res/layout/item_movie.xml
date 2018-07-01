@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_height="match_parent"
-	android:layout_width="match_parent">
-
-	<ImageView
-		android:id="@+id/item_movie_image"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_centerInParent="true"
-		android:transitionName="@string/movieTransitionName" />
-
-	<TextView
-		android:id="@+id/image_movie_alt_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:paddingTop="20dp"
-		android:paddingBottom="20dp"
-		android:layout_centerInParent="true"
-		android:visibility="gone"/>
-</RelativeLayout>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/item_movie_image"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_margin="5dp" />

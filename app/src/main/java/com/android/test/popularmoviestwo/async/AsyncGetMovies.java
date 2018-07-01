@@ -57,8 +57,8 @@ public class AsyncGetMovies extends AsyncTask<Context, Void, PojoMovies> {
             PojoMovies pojoMovies = gson.fromJson(contentAsString, PojoMovies.class);
 
             //loop through all movies and insert into DB.
-            if(pojoMovies != null && pojoMovies.movies != null){
-                for (Movie movie : pojoMovies.movies) {
+            if(pojoMovies != null && pojoMovies.getMovies() != null){
+                for (Movie movie : pojoMovies.getMovies()) {
                     mDb.movieDao().insertMovie(movie);
                 }
             }

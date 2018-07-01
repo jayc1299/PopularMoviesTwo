@@ -16,7 +16,7 @@ import com.android.test.popularmoviestwo.fragments.FragmentDetail;
 import com.android.test.popularmoviestwo.fragments.FragmentMain;
 import com.android.test.popularmoviestwo.objects.Movie;
 
-public class ActivityMain extends AppCompatActivity implements FragmentMain.IFragmentMainListener {
+public class ActivityMain extends AppCompatActivity {
 
     private static final String TAG = ActivityMain.class.getSimpleName();
     public static final int REQUEST_CODE_SETTINGS = 1;
@@ -42,8 +42,8 @@ public class ActivityMain extends AppCompatActivity implements FragmentMain.IFra
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             FragmentMain frag = new FragmentMain();
             Bundle args = new Bundle();
-            args.putBoolean(FragmentMain.TAG_TABLET_MODE, mTwoPainMode);
             frag.setArguments(args);
+            frag.setListener(movieClickListener);
             ft.replace(R.id.activity_main_movies_container, frag, FragmentMain.class.getSimpleName());
             ft.commit();
             refreshMovieList();
@@ -108,26 +108,23 @@ public class ActivityMain extends AppCompatActivity implements FragmentMain.IFra
         return mPrefs.getBoolean(getString(R.string.pref_favs_key), false);
     }
 
-    /**
-     * Callback from Fragment Main if we need to show movie details in a split screen pane, instead of opening new activity
-     *
-     * @param movie the movie details to show
-     */
-    @Override
-    public void onMovieClicked(Movie movie) {
-        if (mTwoPainMode) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            FragmentDetail frag = new FragmentDetail();
-            Intent intent = getIntent();
-            intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, movie);
-            ft.replace(R.id.activity_main_detail_container, frag, FragmentDetail.class.getSimpleName());
-            ft.commit();
-        } else {
-            Intent intent = new Intent(ActivityMain.this, ActivityDetail.class);
-            intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, movie);
-            startActivity(intent);
+    FragmentMain.IFragmentMainListener movieClickListener = new FragmentMain.IFragmentMainListener() {
+        @Override
+        public void onMovieClicked(Movie movie) {
+            if (mTwoPainMode) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                FragmentDetail frag = new FragmentDetail();
+                Intent intent = getIntent();
+                intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, movie);
+                ft.replace(R.id.activity_main_detail_container, frag, FragmentDetail.class.getSimpleName());
+                ft.commit();
+            } else {
+                Intent intent = new Intent(ActivityMain.this, ActivityDetail.class);
+                intent.putExtra(ActivityDetail.TAG_MOVIE_OBJECT, movie);
+                startActivity(intent);
+            }
         }
-    }
+    };
 
     /**
      * Get movies from web.
