@@ -58,6 +58,7 @@ public class AsyncGetMovies extends AsyncTask<Context, Void, PojoMovies> {
 
             //loop through all movies and insert into DB.
             if(pojoMovies != null && pojoMovies.getMovies() != null){
+                Log.d(TAG, "doInBackground: " + pojoMovies.getMovies().size());
                 for (Movie movie : pojoMovies.getMovies()) {
                     mDb.movieDao().insertMovie(movie);
                 }

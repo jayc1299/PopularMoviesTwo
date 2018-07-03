@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,6 @@ import java.util.List;
 public class FragmentMain extends Fragment {
 
     private static final String TAG = FragmentMain.class.getSimpleName();
-    public static final String TAG_TABLET_MODE = "tag_tablet_mode";
     private static final String SELECTED_KEY = "selected_position";
 
     private RecyclerView mGridview;
@@ -50,11 +50,17 @@ public class FragmentMain extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Init ViewModel
         viewModel = ViewModelProviders.of(this).get(MoviesViewModel.class);
         viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(@Nullable List<Movie> movies) {
-                onMoviesReceived(movies);
+            	if(movies != null) {
+					Log.d(TAG, "onChanged: " + movies.size());
+					onMoviesReceived(movies);
+				}else{
+					Log.d(TAG, "No Movies");
+				}
             }
         });
     }
@@ -87,13 +93,28 @@ public class FragmentMain extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
-    public void setListener(IFragmentMainListener listener){
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		Log.d(TAG, "onResume: ");
+		if (isShowFavourites()) {
+			viewModel.getFavourites();
+		}else{
+			viewModel.getAllMovies();
+		}
+	}
+
+	public void setListener(IFragmentMainListener listener){
     	mCallback = listener;
 	}
 
 	private void onMoviesReceived(List<Movie> movies) {
+
 		if(getActivity() != null && !getActivity().isFinishing()) {
 			if (movies != null && movies.size() > 0) {
+				Log.d(TAG, "onMoviesReceived: " + movies.size());
+
 				AdapterMovies adapter = new AdapterMovies(getActivity(), movieClickedListener, movies);
 				mGridview.setAdapter(adapter);
 				getView().findViewById(R.id.fragment_main_no_results).setVisibility(View.GONE);
