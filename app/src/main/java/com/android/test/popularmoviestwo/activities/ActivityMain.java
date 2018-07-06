@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.test.popularmoviestwo.R;
-import com.android.test.popularmoviestwo.async.AsyncGetMovies;
 import com.android.test.popularmoviestwo.fragments.FragmentDetail;
 import com.android.test.popularmoviestwo.fragments.FragmentMain;
 import com.android.test.popularmoviestwo.objects.Movie;
@@ -46,7 +45,6 @@ public class ActivityMain extends AppCompatActivity {
             frag.setListener(movieClickListener);
             ft.replace(R.id.activity_main_movies_container, frag, FragmentMain.class.getSimpleName());
             ft.commit();
-            refreshMovieList();
         }
     }
 
@@ -77,9 +75,6 @@ public class ActivityMain extends AppCompatActivity {
             if (requestCode == REQUEST_CODE_SETTINGS) {
                 //Settings always causes refresh
                 refreshMovieList();
-            } else if (requestCode == REQUEST_CODE_DETAIL && isShowFavourites()) {
-                //On detail close, only refresh if showing favourites.
-                refreshMovieList();
             }
         }
     }
@@ -89,7 +84,10 @@ public class ActivityMain extends AppCompatActivity {
      */
     private void refreshMovieList() {
         Log.d(TAG, "refreshMovieList: ");
-        getMovies();
+        FragmentMain frag = (FragmentMain) getSupportFragmentManager().findFragmentByTag(FragmentMain.class.getSimpleName());
+        if (frag != null) {
+            frag.showDesiredMovieList();
+        }
         updateActionBarTitle();
     }
 
@@ -125,13 +123,4 @@ public class ActivityMain extends AppCompatActivity {
             }
         }
     };
-
-    /**
-     * Get movies from web.
-     */
-    private void getMovies() {
-        Log.d(TAG, "getMovies: ");
-        AsyncGetMovies async = new AsyncGetMovies();
-        async.execute(this);
-    }
 }

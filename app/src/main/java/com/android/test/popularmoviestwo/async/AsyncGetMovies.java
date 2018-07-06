@@ -5,8 +5,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.test.popularmoviestwo.MovieApi;
-import com.android.test.popularmoviestwo.database.AppDatabase;
-import com.android.test.popularmoviestwo.objects.Movie;
 import com.android.test.popularmoviestwo.objects.PojoMovies;
 import com.google.gson.Gson;
 
@@ -16,12 +14,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 
 public class AsyncGetMovies extends AsyncTask<Context, Void, PojoMovies> {
 
+    public interface IAsyncMovies {
+        void onMoviesReceived(PojoMovies movies);
+    }
+
     private static final String TAG = "AsyncGetMovies";
     private static final int mTimeout = 15000;
+    private IAsyncMovies mListener;
+
+    public AsyncGetMovies(IAsyncMovies listener) {
+        mListener = listener;
+    }
 
     @Override
     protected PojoMovies doInBackground(Context... params) {
@@ -49,20 +55,12 @@ public class AsyncGetMovies extends AsyncTask<Context, Void, PojoMovies> {
             Log.d(TAG, "contentAsString: " + contentAsString);
 
             Gson gson = new Gson();
-            AppDatabase mDb = AppDatabase.getInstance(context);
-            //Delete all movies
-            mDb.movieDao().deleteAllMovies();
 
             //Convert json to object
             PojoMovies pojoMovies = gson.fromJson(contentAsString, PojoMovies.class);
 
-            //loop through all movies and insert into DB.
-            if(pojoMovies != null && pojoMovies.getMovies() != null){
-                Log.d(TAG, "doInBackground: " + pojoMovies.getMovies().size());
-                for (Movie movie : pojoMovies.getMovies()) {
-                    mDb.movieDao().insertMovie(movie);
-                }
-            }
+            //Return movies
+            return gson.fromJson(contentAsString, PojoMovies.class);
 
             // Makes sure that the InputStream is closed after the app is
             // finished using it.
@@ -79,6 +77,15 @@ public class AsyncGetMovies extends AsyncTask<Context, Void, PojoMovies> {
         }
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(PojoMovies movies) {
+        super.onPostExecute(movies);
+
+        if (mListener != null) {
+            mListener.onMoviesReceived(movies);
+        }
     }
 
     private String readIt(InputStream stream) throws IOException {
