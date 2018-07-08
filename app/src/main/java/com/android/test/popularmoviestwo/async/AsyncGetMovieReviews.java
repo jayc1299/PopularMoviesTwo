@@ -46,6 +46,7 @@ public class AsyncGetMovieReviews extends AsyncTask<AsyncArgs, Void, PojoReviews
 
 		try {
 			URL url = api.getReviewsUrl(movieId);
+			Log.d(TAG, "myUrl:" + url.toString());
 
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(mTimeout);
@@ -53,7 +54,6 @@ public class AsyncGetMovieReviews extends AsyncTask<AsyncArgs, Void, PojoReviews
 			conn.setRequestMethod("GET");
 			conn.setDoInput(true);
 			conn.connect();
-			int response = conn.getResponseCode();
 			is = conn.getInputStream();
 
 			// Convert the InputStream into a string
