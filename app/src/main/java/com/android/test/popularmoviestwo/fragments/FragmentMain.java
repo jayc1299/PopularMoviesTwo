@@ -60,12 +60,6 @@ public class FragmentMain extends Fragment {
 
         //Init ViewModel
         viewModel = ViewModelProviders.of(this).get(MoviesViewModel.class);
-        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
-            @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-                showMovies(movies);
-            }
-        });
         showDesiredMovieList();
     }
 
@@ -103,11 +97,28 @@ public class FragmentMain extends Fragment {
 
     public void showDesiredMovieList(){
         if (isShowFavourites()) {
-            showOnlyFavourites();
+			viewModel.getMovies().removeObserver(movieObserver);
+			viewModel.getFavourites().observe(this, favouritesObserver);
         } else {
+			viewModel.getFavourites().removeObserver(favouritesObserver);
             getMovies();
+			viewModel.getMovies().observe(this, movieObserver);
         }
     }
+
+    Observer<List<Movie>> movieObserver = new Observer<List<Movie>>() {
+		@Override
+		public void onChanged(@Nullable List<Movie> movies) {
+			showMovies(movies);
+		}
+	};
+
+	Observer<List<Movie>> favouritesObserver = new Observer<List<Movie>>() {
+		@Override
+		public void onChanged(@Nullable List<Movie> movies) {
+			showMovies(movies);
+		}
+	};
 
     /**
      * Get movies from web.
@@ -118,16 +129,10 @@ public class FragmentMain extends Fragment {
         async.execute(getActivity());
     }
 
-    private void showOnlyFavourites() {
-        Log.d(TAG, "showOnlyFavourites: ");
-        viewModel.getFavourites();
-    }
-
     AsyncGetMovies.IAsyncMovies moviesListener = new AsyncGetMovies.IAsyncMovies() {
         @Override
         public void onMoviesReceived(PojoMovies movies) {
             if (getActivity() != null && !getActivity().isFinishing() && movies != null && movies.getMovies() != null) {
-                Log.d(TAG, "onMoviesReceived: " + movies.getMovies().size());
                 viewModel.saveFullMovieList(movies.getMovies());
             }
         }
@@ -143,6 +148,7 @@ public class FragmentMain extends Fragment {
                 noResults.setVisibility(View.GONE);
                 mGridview.setVisibility(View.VISIBLE);
             } else {
+                Log.d(TAG, "No Movies found");
                 if(isShowFavourites()){
                     noResults.setText(getString(R.string.no_favourites_found));
                 }else{

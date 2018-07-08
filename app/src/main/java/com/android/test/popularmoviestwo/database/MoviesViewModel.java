@@ -15,27 +15,26 @@ public class MoviesViewModel extends AndroidViewModel {
 
     private static final String TAG = MoviesViewModel.class.getSimpleName();
     private MutableLiveData<List<Movie>> movies;
-    private List<Movie> allMovies;
+    private LiveData<List<Movie>> favouriteMovies;
     private AppDatabase database;
 
     public MoviesViewModel(@NonNull Application application) {
         super(application);
         database = AppDatabase.getInstance(this.getApplication());
         movies = new MutableLiveData<>();
+		favouriteMovies = new MutableLiveData<>();
     }
 
     public void saveFullMovieList(List<Movie> newMovies) {
         Log.d(TAG, "saveFullMovieList: " + newMovies.size());
-        allMovies = newMovies;
         movies.postValue(newMovies);
     }
 
-    public void getFavourites() {
-        movies.postValue(database.movieDao().getOnlyFavourites().getValue());
-    }
+    public LiveData<List<Movie>> getFavourites() {
+        Log.d(TAG, "getFavourites: ");
+		favouriteMovies = database.movieDao().getOnlyFavourites();
 
-    public void getAllMovies() {
-        movies.setValue(allMovies);
+        return favouriteMovies;
     }
 
     public LiveData<List<Movie>> getMovies() {
