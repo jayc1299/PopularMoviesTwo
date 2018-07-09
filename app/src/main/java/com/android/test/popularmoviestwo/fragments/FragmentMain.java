@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,14 +31,15 @@ public class FragmentMain extends Fragment {
 
     private static final String TAG = FragmentMain.class.getSimpleName();
     private static final String SELECTED_KEY = "selected_position";
+    private static final String LIST_STATE_KEY = "list_state_key";
 
     private RecyclerView mGridview;
     private TextView noResults;
     private SharedPreferences mPrefs;
     private IFragmentMainListener mCallback;
-    private int mPosition = ListView.INVALID_POSITION;
+    private int mSelectedPosition = ListView.INVALID_POSITION;
     private MoviesViewModel viewModel;
-
+    private Parcelable recyclerInstanceState;
 
     public interface IFragmentMainListener {
         void onMovieClicked(Movie movie);
@@ -73,52 +75,70 @@ public class FragmentMain extends Fragment {
         mGridview = getView().findViewById(R.id.fragment_main_gridview);
         mGridview.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
-            // The listview probably hasn't even been populated yet.  Actually perform the
-            // swapout in onLoadFinished.
-            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(SELECTED_KEY)) {
+                // The listview probably hasn't even been populated yet.  Actually perform the
+                // swapout in onLoadFinished.
+                mSelectedPosition = savedInstanceState.getInt(SELECTED_KEY);
+            }
+            //Save the state. Especially the scroll position.
+            if (savedInstanceState.containsKey(LIST_STATE_KEY)) {
+                recyclerInstanceState = savedInstanceState.getParcelable(LIST_STATE_KEY);
+                restoreInstanceState();
+            }
         }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         // When tablets rotate, the currently selected list item needs to be saved.
-        // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
+        // When no item is selected, mSelectedPosition will be set to Listview.INVALID_POSITION,
         // so check for that before storing.
-        if (mPosition != ListView.INVALID_POSITION) {
-            outState.putInt(SELECTED_KEY, mPosition);
+        if (mSelectedPosition != ListView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mSelectedPosition);
         }
+        Parcelable listState = mGridview.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable(LIST_STATE_KEY, listState);
         super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * Get the Recycler to reload it's scroll state.
+     */
+    private void restoreInstanceState() {
+        if (recyclerInstanceState != null) {
+            mGridview.getLayoutManager().onRestoreInstanceState(recyclerInstanceState);
+        }
     }
 
     public void setListener(IFragmentMainListener listener) {
         mCallback = listener;
     }
 
-    public void showDesiredMovieList(){
+    public void showDesiredMovieList() {
         if (isShowFavourites()) {
-			viewModel.getMovies().removeObserver(movieObserver);
-			viewModel.getFavourites().observe(this, favouritesObserver);
+            viewModel.getMovies().removeObserver(movieObserver);
+            viewModel.getFavourites().observe(this, favouritesObserver);
         } else {
-			viewModel.getFavourites().removeObserver(favouritesObserver);
+            viewModel.getFavourites().removeObserver(favouritesObserver);
             getMovies();
-			viewModel.getMovies().observe(this, movieObserver);
+            viewModel.getMovies().observe(this, movieObserver);
         }
     }
 
     Observer<List<Movie>> movieObserver = new Observer<List<Movie>>() {
-		@Override
-		public void onChanged(@Nullable List<Movie> movies) {
-			showMovies(movies);
-		}
-	};
+        @Override
+        public void onChanged(@Nullable List<Movie> movies) {
+            showMovies(movies);
+        }
+    };
 
-	Observer<List<Movie>> favouritesObserver = new Observer<List<Movie>>() {
-		@Override
-		public void onChanged(@Nullable List<Movie> movies) {
-			showMovies(movies);
-		}
-	};
+    Observer<List<Movie>> favouritesObserver = new Observer<List<Movie>>() {
+        @Override
+        public void onChanged(@Nullable List<Movie> movies) {
+            showMovies(movies);
+        }
+    };
 
     /**
      * Get movies from web.
@@ -147,11 +167,12 @@ public class FragmentMain extends Fragment {
                 mGridview.setAdapter(adapter);
                 noResults.setVisibility(View.GONE);
                 mGridview.setVisibility(View.VISIBLE);
+                restoreInstanceState();
             } else {
                 Log.d(TAG, "No Movies found");
-                if(isShowFavourites()){
+                if (isShowFavourites()) {
                     noResults.setText(getString(R.string.no_favourites_found));
-                }else{
+                } else {
                     noResults.setText(getString(R.string.no_movies_found));
                 }
                 noResults.setVisibility(View.VISIBLE);
