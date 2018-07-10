@@ -184,7 +184,9 @@ public class FragmentMain extends Fragment {
     private AdapterMovies.IMovieClickedListener movieClickedListener = new AdapterMovies.IMovieClickedListener() {
         @Override
         public void onMovieClickedListener(Movie movie, View view) {
-            mCallback.onMovieClicked(movie);
+            if(mCallback != null) {
+                mCallback.onMovieClicked(movie);
+            }
         }
     };
 

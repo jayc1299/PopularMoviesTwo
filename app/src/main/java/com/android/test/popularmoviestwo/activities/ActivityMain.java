@@ -45,6 +45,11 @@ public class ActivityMain extends AppCompatActivity {
             frag.setListener(movieClickListener);
             ft.replace(R.id.activity_main_movies_container, frag, FragmentMain.class.getSimpleName());
             ft.commit();
+        }else{
+            FragmentMain frag = (FragmentMain) getSupportFragmentManager().findFragmentByTag(FragmentMain.class.getSimpleName());
+            if (frag != null) {
+                frag.setListener(movieClickListener);
+            }
         }
     }
 
@@ -87,6 +92,7 @@ public class ActivityMain extends AppCompatActivity {
         FragmentMain frag = (FragmentMain) getSupportFragmentManager().findFragmentByTag(FragmentMain.class.getSimpleName());
         if (frag != null) {
             frag.showDesiredMovieList();
+            frag.setListener(movieClickListener);
         }
         updateActionBarTitle();
     }
